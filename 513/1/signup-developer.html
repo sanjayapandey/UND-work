@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Add developer</title>
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <link rel="stylesheet" href="css/bootstrap.min.css">  
+  <link rel="stylesheet" href="css/bookstore.css">
+  <link rel="stylesheet" href="css/font-awesome.min.css">
+  <link rel="stylesheet" href="css/ionicons.min.css">
+  <link rel="stylesheet" href="css/skins/_all-skins.min.css">
+</head>
+<body>
+<div class="container">
+  <div class="login-logo">
+    <b>Game</b>Store
+  </div>
+   <!-- Small boxes (Stat box) -->
+		<div class="row">
+		<div class="col-sm-2"></div>
+		<div class="col-sm-8">
+			<h2>Create New Developer</h2>
+		   <form class="form-horizontal" method="POST" action="http://people.aero.und.edu/~spandey/cgi-bin/513/1/Usr.cgi">
+		    <div class="form-group">
+			    <label for="firstName">First Name <strong>*</strong></label>
+			    <input type="text" class="form-control" name="firstName" placeholder="First Name" required>
+		 	 </div>
+		 	 <div class="form-group">
+			    <label for="lastName">Last Name<strong>*</strong></label>
+			    <input type="text" class="form-control" name="lastName" placeholder="Last Name" required>
+		 	 </div>
+			<br>
+			<br>
+		    <input type="hidden" name="username" value="">
+		    <input type="hidden" name="password" value="">
+		    <input type="hidden" name="role" value="developer">
+		    <input type="submit" class="btn btn-primary " name="submit" value="Create Developer">             
+		    &nbsp;&nbsp;&nbsp;<input type="reset" class="btn btn-success " value="Reset"><br/><br />
+		 </form> 
+		 <a href="1/login.php" class="btn btn-info btn-flat"> Back to
+													Login </a>
+		 </div>
+		
+		 </div>
+		 </div>
+</body>
+</html>
