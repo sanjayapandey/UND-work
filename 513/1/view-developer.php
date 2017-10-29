@@ -23,34 +23,6 @@ include("config.php");
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.js"></script>
 </head>
-
-<script>
-   var xmlhttp = new XMLHttpRequest( );
-   var url = "../../cgi-bin/513/1/customers.cgi";
-   xmlhttp.onreadystatechange = function( ) {
-    if ( xmlhttp.readyState == 4 && xmlhttp.status == 200 ) {
-     myFunction( xmlhttp.responseText );
-    }
-   }
-   xmlhttp.open( "GET", url, true );
-   xmlhttp.send( );
-
-  function myFunction( response ) {
-    var arr = JSON.parse( response );
-    var i;
-    var out  = "<table class='table table-bordered'><tr><th>Customer Id</th>" +
-               "<th>Customer Name</th></tr>";
-    for ( i = 0; i < arr.length; i++ ) {
-     out += "<tr><td>"  + arr[i].id +
-            "</td><td> <a href='view-customer.php?id="+ arr[i].id +"'>" + arr[i].name + "</a>"+
-            "</td></tr>";
-    }
-    out += "</table>"
-    document.getElementById( "customer-table" ).innerHTML = out;
-   }
-
-</script>
-
 <body>
 <div id="wrapper">
  <!-- Sidebar -->
@@ -93,14 +65,51 @@ include("config.php");
 				</div>
 			</div>
 			<div class="col-sm-8">
-			<h2>List Customers</h2>
-			<div class="row">
-				<div id="customer-table">
-			</div>
-			   
+			<h2>View Developer</h2>
+			   <input type="hidden" id="id" name="id" value="<?php echo $_GET['id'] ?>">
+			   <form class="form-horizontal" method="post" action="#">
+			    <div class="form-group">
+				    <label for="ISBN">Developer Id </label>
+				   <div id="name-id"></div>
+			 	 </div>
+			 	  <div class="form-group">
+				    <label for="title">First Name</label>
+				    <div id="name-fname"></div>
+			 	 </div>
+			 	 <div class="form-group">
+				    <label for="price">Last Name</label>
+				    <div id="name-lname"></div>
+			 	 </div>
+				<div class="form-group">
+				    <label for="games">Developed Games</label>
+				    List of Games:		   
+			 	 </div>
+			 	</form> 
 		    </div>
 		  </div>
 		   
 		 </div>
 </body>
+<script>
+   var id = document.getElementById('id').value;
+   var xmlhttp = new XMLHttpRequest( );
+   var url = "http://people.aero.und.edu/~spandey/cgi-bin/513/1/viewDeveloper.cgi";
+
+   $.ajax({
+           type: "GET",
+           url: url,
+           data:"action=view&id="+id,
+           success: function(data)
+           {    
+		                
+		var arr = JSON.parse( data);
+		
+                document.getElementById('name-id').innerHTML =arr[0].id;
+		document.getElementById('name-fname').innerHTML=arr[0].fname;
+		document.getElementById('name-lname').innerHTML=arr[0].lname;
+		
+		}    
+     });
+
+</script>
 </html>

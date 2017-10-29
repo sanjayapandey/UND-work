@@ -38,12 +38,14 @@ include("config.php");
   function myFunction( response ) {
     var arr = JSON.parse( response );
     var i;
-    var out  = "<table class='table table-bordered'><tr><th>ISBN</th>" +
+    var out  = "<table class='table table-bordered'><tr><th>ASIN</th>" +
                "<th>Title</th>" +
+	       "<th>Developers</th>" +
                "<th>Price</th></tr>";
     for ( i = 0; i < arr.length; i++ ) {
      out += "<tr><td>"  + arr[i].ASIN +
-            "</td><td>" + arr[i].title +
+            "</td><td> <a href='view-game.php?ISBN="+ arr[i].ASIN +"'>" + arr[i].title + "</a>"+
+	     "</td><td>" + arr[i].developer +
             "</td><td>" + arr[i].price +
             "</td></tr>";
     }
@@ -95,7 +97,7 @@ include("config.php");
 				</div>
 			</div>
 			<div class="col-sm-8">
-			<a href="game.php" class="btn btn-primary btn-flat pull-right" style="border-radius: 50%;"> Add New Game </a>
+			<a href="add-game.php" class="btn btn-primary btn-flat pull-right" style="border-radius: 50%;"> Add New Game </a>
 			<h2>List Games</h2>
 			<div class="row">
 				<div id="game-table">

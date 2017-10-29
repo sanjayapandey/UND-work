@@ -35,13 +35,15 @@ if(!isset($_SESSION['username'])){
   function myFunction( response ) {
     var arr = JSON.parse( response );
     var i;
-    var out  = "<table class='table table-bordered'><tr><th>ISBN</th>" +
+    var out  = "<table class='table table-bordered'><tr><th>ASIN</th>" +
                "<th>Title</th>" +
+		"<th>Developer</th>" +
                "<th>Price</th></tr>";
     for ( i = 0; i < arr.length; i++ ) {
      out += "<tr><td>"  +
 	    "<tr><td>"  + arr[i].ASIN +
-            "</td><td>" + arr[i].title +
+            "</td><td> <a href='view-game.php?ISBN="+ arr[i].ASIN +"'>" + arr[i].title + "</a>"+
+            "</td><td>" + arr[i].developer +
             "</td><td>" + arr[i].price +
             "</td></tr>";
     }

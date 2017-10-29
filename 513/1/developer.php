@@ -38,11 +38,12 @@ include("config.php");
   function myFunction( response ) {
     var arr = JSON.parse( response );
     var i;
-    var out  = "<table class='table table-bordered'><tr><th>ID</th>" +
-               "<th>Last Name</th></tr>";
+    var out  = "<table class='table table-bordered'><tr><th>Developer Id</th>" +
+               "<th>Full Name</th>"+"<th>Select Developers</th>"+"</tr>";
     for ( i = 0; i < arr.length; i++ ) {
      out += "<tr><td>"  + arr[i].id +
-            "</td><td>" + arr[i].name +
+            "</td><td><a href='view-developer.php?id="+ arr[i].id +"'>" + arr[i].name + "</a>"+
+	     "</td><td><input type='checkbox' name='developerIds' value='"+arr[i].id+"'>"+
             "</td></tr>";
     }
     out += "</table>"
@@ -95,7 +96,19 @@ include("config.php");
 			<div class="col-sm-8">
 			<h2>List Developers</h2>
 			<div class="row">
-				<div id="developer-table">
+			<form class="form-horizontal" method="post" action="../../cgi-bin/513/1/deleteDeveloper.cgi">
+				<div id="developer-table"></div>
+			<br><br>
+				  <div class="row">
+					<div class="col-sm-12 box">
+					<h3> Delete Developer:</h3>
+						<div id="developer-select-list"></div>
+						<div class="pull-right">
+						<input type="hidden" name="action" value="deleteDeveloper">
+						<input type="submit" class="btn btn-danger " name="submit" value="Delete selected developer">	
+						</div>				
+				  </div>
+			</form>
 			</div>
 			   
 		    </div>

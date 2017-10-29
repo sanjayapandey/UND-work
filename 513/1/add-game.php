@@ -97,8 +97,8 @@ include("config.php");
 
 			   <form class="form-horizontal" method="post" action="../../cgi-bin/513/1/game.cgi">
 			    <div class="form-group">
-				    <label for="ISBN">ISBN(unique) <strong>*</strong></label>
-				    <input type="text" class="form-control" name="ISBN" placeholder="ISBN" required>
+				    <label for="ISBN">ASIN(unique) <strong>*</strong></label>
+				    <input type="text" class="form-control" name="ISBN" placeholder="ASIN" required>
 			 	 </div>
 			 	  <div class="form-group">
 				    <label for="title">Title<strong>*</strong></label>

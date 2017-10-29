@@ -20,25 +20,47 @@ class  Customers{
     try {
       // Create, compose, and execute a statement.
       Statement stmt = conn.createStatement( );
-    /**	select value(p).id,value(p).name.fname,value(p).name.lname from developer p;
+    	/**	select value(p).id,value(p).name.fname,value(p).name.lname from developer p;
 
 	**/
-     String  query  = "select value(p).id,value(p).name.fname,value(p).name.lname from customer p";
+	if(args[0].equalsIgnoreCase("list")){
+    	      String  query  = "select value(p).id,value(p).name.fname,value(p).name.lname from customer p";
 
-     ResultSet rset = stmt.executeQuery( query );
-	// Iterate through the result and save the data.
-	 // Iterate through the result and save the data.
-      String  outp = "[";
-      while ( rset.next( ) ) {
-        if ( outp != "[" ) outp += ",";
-      	 outp += "{\"id\":\""   + rset.getString(1) + "\",";
-        outp += "\"name\":\"" + rset.getString(2) +" "+ rset.getString(3)+ "\"}";
-      }
-      outp += "]" ;
-      // Print the JSON object outp.
+	     ResultSet rset = stmt.executeQuery( query );
+		// Iterate through the result and save the data.
+		 // Iterate through the result and save the data.
+	      String  outp = "[";
+	      while ( rset.next( ) ) {
+		if ( outp != "[" ) outp += ",";
+	      	 outp += "{\"id\":\""   + rset.getString(1) + "\",";
+		outp += "\"name\":\"" + rset.getString(2) +" "+ rset.getString(3)+ "\"}";
+	      }
+	      outp += "]" ;
+		// Print the JSON object outp.
       System.out.println( outp );
+		rset.close( );
+
+	}else if(args[0].equalsIgnoreCase("view")){
+		 String  query  = "select value(p).id,value(p).name.fname,value(p).name.lname from customer p where id="+args[1];
+
+	     ResultSet rset = stmt.executeQuery( query );
+		// Iterate through the result and save the data.
+		 // Iterate through the result and save the data.
+	      String  outp = "[";
+	      while ( rset.next( ) ) {
+		if ( outp != "[" ) outp += ",";
+	      	 outp += "{\"id\":\""   + rset.getString(1) + "\",";
+		outp += "\"fname\":\"" + rset.getString(2)+ "\",";
+		outp += "\"lname\":\""+ rset.getString(3)+ "\"}";
+	      }
+	      outp += "]" ;
+		// Print the JSON object outp.
+    	  System.out.println( outp );
+		rset.close( );
+	}
+      
     // Close the ResultSet and Statement.
-      rset.close( );
+      
       stmt.close( );
     }
     catch ( SQLException ex ) {
