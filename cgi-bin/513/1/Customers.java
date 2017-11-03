@@ -24,7 +24,7 @@ class  Customers{
 
 	**/
 	if(args[0].equalsIgnoreCase("list")){
-    	      String  query  = "select value(p).id,value(p).name.fname,value(p).name.lname from customer p";
+    	      String  query  = "select id, c.customer.name.fname, c.customer.name.lname from customer c";
 
 	     ResultSet rset = stmt.executeQuery( query );
 		// Iterate through the result and save the data.
@@ -41,7 +41,7 @@ class  Customers{
 		rset.close( );
 
 	}else if(args[0].equalsIgnoreCase("view")){
-		 String  query  = "select value(p).id,value(p).name.fname,value(p).name.lname from customer p where id="+args[1];
+		 String  query  = "select id, c.customer.name.fname, c.customer.name.lname from customer c where id="+args[1];
 
 	     ResultSet rset = stmt.executeQuery( query );
 		// Iterate through the result and save the data.

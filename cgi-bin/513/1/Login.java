@@ -20,7 +20,7 @@ class  Login {
     try {
       // Create, compose, and execute a statement.
       Statement stmt = conn.createStatement( );
-     String  query  = "select ID from customer where username='"+args[0].trim()+"' and password='"+args[1].trim()+"'";
+     String  query  = "select ID from customer c where c.customer.username='"+args[0].trim()+"' and c.customer.password='"+args[1].trim()+"'";
      ResultSet rset = stmt.executeQuery( query );
 	boolean loggedIn = false;
 	int userId = 0;

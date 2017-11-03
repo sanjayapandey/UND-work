@@ -173,10 +173,22 @@ class  Game{
 		cs.close();
 		//rset.close( );
 		
+	}else if (args[0].equalsIgnoreCase("updatePrice")){
+		String[] ASINs = args[1].split(",");
+		String[] prices = args[2].split(",");
+
+	      /*Adding elements to HashMap*/
+		for(int i=0;i<ASINs.length;i++){
+			System.out.println("ASIN is: "+ASINs[i] +" and price is: "+prices[i]);	
+			query = "update game set price="+prices[i]+" where ASIN='"+ASINs[i]+"'";
+			Statement stmt1 = conn.createStatement( );
+			stmt1.executeQuery( query );
+			stmt1.close();	
+		}
 	}
      
      
-      stmt.close( );
+      //stmt.close( );
     }
     catch (Exception ex ) {
       System.out.println( ex );

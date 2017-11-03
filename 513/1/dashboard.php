@@ -35,21 +35,30 @@ if(!isset($_SESSION['username'])){
   function myFunction( response ) {
     var arr = JSON.parse( response );
     var i;
-    var out  = "<table class='table table-bordered'><tr><th>ASIN</th>" +
+    var out  = "<table class='table table-bordered'><tr><th>Select</th>" +
                "<th>Title</th>" +
 		"<th>Developer</th>" +
-               "<th>Price</th></tr>";
+               "<th>Purchase quantity</th></tr>";
     for ( i = 0; i < arr.length; i++ ) {
      out += "<tr><td>"  +
-	    "<tr><td>"  + arr[i].ASIN +
+	    "<tr><td><input type='checkbox' name='asins' value='"+ arr[i].ASIN +"'>" +
             "</td><td> <a href='view-game.php?ISBN="+ arr[i].ASIN +"'>" + arr[i].title + "</a>"+
             "</td><td>" + arr[i].developer +
-            "</td><td>" + arr[i].price +
+            "</td><td><input type='number' name='quantities' min=0 value=0 >"+
             "</td></tr>";
     }
     out += "</table>"
     document.getElementById( "game-table" ).innerHTML = out;
    }
+
+$('input[name="asins"]').on('click', function() {
+   if ($(this).is(':checked')) {
+      $(this).siblings("input[type=number]").attr('quantities').removeProp("disabled");
+   }
+   else {
+      $(this).siblings("input[type=number]").attr('quantities').prop("disabled", "disabled");
+   }
+});
 
 </script>
 
@@ -109,11 +118,11 @@ if(!isset($_SESSION['username'])){
 				<div class="row">
 					<h2>List of Games</h2>
 				</div>
-				<form action="#" method="POST">
+				<form action="../../cgi-bin/513/1/purchaseGame.cgi" method="POST">
 				<div id="game-table"></div>
 				<div class="row">
 					<div class="col-sm-12">
-						<input type="submit" class="btn btn-primary btn-sm pull-right" name="addToCart" value="Add selected item to Cart">
+						<input type="submit" class="btn btn-primary btn-sm pull-right" name="addToCart" value="Purchase selected items">
 					</div>
 				</div>
 				</form>
@@ -123,8 +132,8 @@ if(!isset($_SESSION['username'])){
 					$_SESSION['cart']= array();
 				}
 				if(isset($_POST['addToCart'])){ //check if cart form was submitted
-					if(isset($_POST['check_list']) && is_array($_POST['check_list'])){
-						foreach($_POST['check_list'] as $checkbox){
+					if(isset($_POST['asins']) && is_array($_POST['asins'])){
+						foreach($_POST['asins'] as $checkbox){
 							array_push($_SESSION['cart'],$checkbox);
 						}
 					}

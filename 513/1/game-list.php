@@ -41,12 +41,14 @@ include("config.php");
     var out  = "<table class='table table-bordered'><tr><th>ASIN</th>" +
                "<th>Title</th>" +
 	       "<th>Developers</th>" +
-               "<th>Price</th></tr>";
+	       "<th>Price</th>" +
+               "<th>Update Price</th></tr>";
     for ( i = 0; i < arr.length; i++ ) {
      out += "<tr><td>"  + arr[i].ASIN +
             "</td><td> <a href='view-game.php?ISBN="+ arr[i].ASIN +"'>" + arr[i].title + "</a>"+
 	     "</td><td>" + arr[i].developer +
             "</td><td>" + arr[i].price +
+	    "</td><td><input type='hidden' name='keys'  value='"+arr[i].ASIN+"'><input type=number name='prices' value="+arr[i].price+">"+ 
             "</td></tr>";
     }
     out += "</table>"
@@ -100,7 +102,20 @@ include("config.php");
 			<a href="add-game.php" class="btn btn-primary btn-flat pull-right" style="border-radius: 50%;"> Add New Game </a>
 			<h2>List Games</h2>
 			<div class="row">
-				<div id="game-table">
+				<form class="form-horizontal" method="post" action="../../cgi-bin/513/1/updatePrice.cgi">
+				<div id="game-table"></div>
+				 	<div class="row">
+					<div class="col-sm-12 box">
+						<h3> Delete Developer:</h3>
+						<div class="pull-right">
+						<input type="hidden" name="action" value="updatePrice">
+						<input type="submit" class="btn btn-primary " name="submit" value="Update game price">	
+						</div>				
+					  </div>
+					</div>
+				</form>
+			</div>
+
 			</div>
 			   
 		    </div>

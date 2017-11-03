@@ -3,8 +3,10 @@ import  java.sql.*;
 import  java.io.*;
 import  oracle.jdbc.*;
 import  oracle.jdbc.pool.OracleDataSource;
+import java.sql.CallableStatement;
 
-class  Usr {
+
+class  PurchaseGame{
   public static void  main( String args[ ] ) throws SQLException {
     String user     = "spandey";//System.getenv("ORACLE_USER");
     String password = "sanjaya1";// System.getenv("ORACLE_PASS");
@@ -21,32 +23,23 @@ class  Usr {
       // Create, compose, and execute a statement.
       Statement stmt = conn.createStatement( );
 	String  query = "";
-	//case:1 Role=developer
-	if(args[0].equalsIgnoreCase("developer")){
-
-		 query  = "insert into developer values(id.NEXTVAL,name_type('"+args[1].trim()+"','"+args[2].trim()+"'))";	
-	}else if(args[0].equalsIgnoreCase("customer")){
-	//case:2 Role=customer
-     		query  = "insert into customer (id, customer,amount) values(customer_id.NEXTVAL,customer_type( name_type('"+args[1].trim()+"','"+args[2].trim()+"'),'"+args[3]+"','"+args[4]+"'), 0.00)";
+	ResultSet rset;
+	String[] ASINs = args[0].split(",");
+	String[] quantities = args[1].split(",");
+	for(int i=0;i<ASINs.length;i++){
+			System.out.println("ASIN is: "+ASINs[i] +" and quantity is: "+quantities[i]);	
 	}
-     System.out.println( query + "<b>" );
-    ResultSet rset = stmt.executeQuery( query );
-
-      // Iterate through the result and print the data.
-/**
-      while ( rset.next( ) ) {
-        System.out.print( rset.getString(1) + ", " + rset.getString(2) );
-        System.out.print( ", " + rset.getString(3) );
-      }
- **/
-    // Close the ResultSet and Statement.
-      rset.close( );
-      stmt.close( );
+	//query="select asin,title,price from game where asin='"+args[1]+"'";
+	//rset = stmt.executeQuery( query );
+	// rset.close( );
+	//case:1 add new game
+      	stmt.close( );
     }
-    catch ( SQLException ex ) {
+    catch (Exception ex ) {
       System.out.println( ex );
-    }
+    }finally{
     // Close the Connection.
     conn.close( );
+}
   }
 }

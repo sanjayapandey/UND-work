@@ -48,3 +48,5 @@ insert into TABLE(select g.developers from game g where g.ASIN='ASIN-1234') valu
 >>Combine both using plsql, 
 delete TABLE(select g.developers from game g where g.ASIN='ASIN-1234') d where d.id=1;
 delete TABLE(select g.developers from game g ) d where d.id=1;
+
+update  game set price=12 where ASIN='ASIN-9'
