@@ -119,10 +119,11 @@ $('input[name="asins"]').on('click', function() {
 					<h2>List of Games</h2>
 				</div>
 				<form action="../../cgi-bin/513/1/purchaseGame.cgi" method="POST">
+				<input type='hidden' name='userId' value="<?php echo $_SESSION['userid']?>">
 				<div id="game-table"></div>
 				<div class="row">
 					<div class="col-sm-12">
-						<input type="submit" class="btn btn-primary btn-sm pull-right" name="addToCart" value="Purchase selected items">
+						<input type="submit" class="btn btn-primary btn-sm pull-right" name="purchase" value="Purchase selected items">
 					</div>
 				</div>
 				</form>

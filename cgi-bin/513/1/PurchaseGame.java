@@ -22,18 +22,61 @@ class  PurchaseGame{
     try {
       // Create, compose, and execute a statement.
       Statement stmt = conn.createStatement( );
-	String  query = "";
+	String  plsql = "";
 	ResultSet rset;
-	String[] ASINs = args[0].split(",");
-	String[] quantities = args[1].split(",");
-	for(int i=0;i<ASINs.length;i++){
-			System.out.println("ASIN is: "+ASINs[i] +" and quantity is: "+quantities[i]);	
-	}
-	//query="select asin,title,price from game where asin='"+args[1]+"'";
-	//rset = stmt.executeQuery( query );
-	// rset.close( );
-	//case:1 add new game
-      	stmt.close( );
+
+	String ASINs = args[1];
+		//remove last ' from string
+		if (ASINs != null && ASINs.length() > 0) {
+			ASINs = ASINs.substring(0, ASINs.length() - 1);
+		}
+	String[] quantities = args[2].split(",");
+
+	plsql = "DECLARE"+
+"  /* Output variables to hold the result of the query: */"+
+"  a GAME.ASIN%type;"+
+"  b GAME.PRICE%type;"+
+"  counter integer;"+
+"  quantity integer;"+
+"  customerId integer := "+args[0]+";"+
+"  /* Cursor declaration: */"+
+"  CURSOR  GameCursor  IS select asin, price from game where asin in ('ASIN-123','ASIN-90');"+
+"BEGIN"+
+"  OPEN  GameCursor;"+
+"  LOOP"+
+"    /* Retrieve each row of the result of the above query into PL/SQL variables: */"+
+"    FETCH  GameCursor  INTO  a, b;"+
+"    /* If there are no more rows to fetch, exit the loop: */"+
+"    EXIT WHEN  GameCursor%NOTFOUND;"+
+"    /* check if that book already purchased or not */"+
+"    BEGIN"+
+"    SELECT count(*) into counter from TABLE(select customer.purchases from customer where customer.id = customerId) p where p.asin = a;"+
+"    EXCEPTION"+
+"      WHEN NO_DATA_FOUND THEN"+
+"        counter := 0;"+
+"    END;"+
+"    BEGIN"+
+"    SELECT p.quantity into quantity from TABLE(select customer.purchases from customer where customer.id = customerId) p where p.asin = a;"+
+"    EXCEPTION"+
+"      WHEN NO_DATA_FOUND THEN"+
+"        quantity := 0;"+
+"    END;"+
+"    if counter=0 then"+
+"        insert into TABLE(select customer.purchases from customer where customer.id = customerId) values (purchase_type(a, 1));"+
+"    else"+
+"        update TABLE(select customer.purchases from customer where customer.id = customerId) set quantity = quantity + 1 where asin =a;"+
+"    end if;"+
+"    update customer set customer.amount = customer.amount + 1*b where id = customerId;"+
+"  END LOOP;"+
+"  /* Free cursor used by the query. */"+
+"  CLOSE  GameCursor;"+
+"END;";
+		System.out.println(plsql);
+		 CallableStatement cs = conn.prepareCall(plsql);
+		cs.execute();
+		System.out.println("success");
+		cs.close();
+		//rset.close( );
     }
     catch (Exception ex ) {
       System.out.println( ex );
