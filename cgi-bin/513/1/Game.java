@@ -32,10 +32,14 @@ class  Game{
 		ResultSet rset1 = stmt1.executeQuery( tempQuery );
 		String developers = "";
 		int index = 1;
+		
+		String  devStr = "[";
 		while ( rset1.next( ) ) {
-			developers = developers +index + ": "+rset1.getString(2) + " " + rset1.getString(3)+"<br>";
-			index ++;
-		}
+			if ( devStr != "[" ) devStr += ",";
+		devStr += "{\"id\":\""   + rset1.getString(1) + "\",";		
+		devStr += "\"developer\":\"" +rset1.getString(2) + " " + rset1.getString(3)+ "\"}";
+	       }
+	       devStr += "]" ;
 		rset1.close( );
 
 		query="select asin,title,price from game where asin='"+args[1]+"'";
@@ -49,7 +53,7 @@ class  Game{
 		outp += "\"title\":\""   + rset.getString(2) + "\",";
 		 outp += "\"price\":\"" + rset.getString(3) + "\",";
 		
-		 outp += "\"developer\":\"" + developers+ "\"}";
+		 outp += "\"developers\":" + devStr+ "}";
 	       }
 	       outp += "]" ;
 	       // Print the JSON object outp.

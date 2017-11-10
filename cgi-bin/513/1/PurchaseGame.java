@@ -25,13 +25,9 @@ class  PurchaseGame{
 	String  plsql = "";
 	ResultSet rset;
 
-	String ASINs = args[1];
-		//remove last ' from string
-		if (ASINs != null && ASINs.length() > 0) {
-			ASINs = ASINs.substring(0, ASINs.length() - 1);
-		}
+	String[] ASINs = args[1].split(",");
 	String[] quantities = args[2].split(",");
-
+	for(int i=0;i<ASINs.length;i++){
 	plsql = "DECLARE"+
 "  /* Output variables to hold the result of the query: */"+
 "  a GAME.ASIN%type;"+
@@ -40,7 +36,7 @@ class  PurchaseGame{
 "  quantity integer;"+
 "  customerId integer := "+args[0]+";"+
 "  /* Cursor declaration: */"+
-"  CURSOR  GameCursor  IS select asin, price from game where asin in ('ASIN-123','ASIN-90');"+
+"  CURSOR  GameCursor  IS select asin, price from game where asin in ('"+ASINs[i]+"');"+
 "BEGIN"+
 "  OPEN  GameCursor;"+
 "  LOOP"+
@@ -62,9 +58,9 @@ class  PurchaseGame{
 "        quantity := 0;"+
 "    END;"+
 "    if counter=0 then"+
-"        insert into TABLE(select customer.purchases from customer where customer.id = customerId) values (purchase_type(a, 1));"+
+"        insert into TABLE(select customer.purchases from customer where customer.id = customerId) values (purchase_type(a, "+quantities[i]+"));"+
 "    else"+
-"        update TABLE(select customer.purchases from customer where customer.id = customerId) set quantity = quantity + 1 where asin =a;"+
+"        update TABLE(select customer.purchases from customer where customer.id = customerId) set quantity = quantity + "+quantities[i]+" where asin =a;"+
 "    end if;"+
 "    update customer set customer.amount = customer.amount + 1*b where id = customerId;"+
 "  END LOOP;"+
@@ -77,6 +73,7 @@ class  PurchaseGame{
 		System.out.println("success");
 		cs.close();
 		//rset.close( );
+}
     }
     catch (Exception ex ) {
       System.out.println( ex );

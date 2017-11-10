@@ -42,8 +42,23 @@ class  Developers{
 		rset.close( );
 
 	}else if(args[0].equalsIgnoreCase("view")){
-		 String  query  = "select value(p).id,value(p).name.fname,value(p).name.lname from developer p where id="+args[1];
+		String tempQuery = "SELECT g.asin, g.title from game g, TABLE(g.developers) d where d.id="+args[1];
+		Statement stmt1 = conn.createStatement( );
+		ResultSet rset1 = stmt1.executeQuery( tempQuery );
+		String games = "";
+		int index = 1;
+		
+		String  gameStr = "[";
+		while ( rset1.next( ) ) {
+			if ( gameStr != "[" ) gameStr += ",";
+			gameStr += "{\"ASIN\":\""   + rset1.getString(1) + "\",";		
+			gameStr += "\"Title\":\"" +rset1.getString(2) + "\"}";
+	       }
+	       gameStr += "]" ;
+		rset1.close( );
 
+
+		String  query  = "select value(p).id,value(p).name.fname,value(p).name.lname from developer p where id="+args[1];
 	     ResultSet rset = stmt.executeQuery( query );
 		// Iterate through the result and save the data.
 		 // Iterate through the result and save the data.
@@ -52,7 +67,8 @@ class  Developers{
 		if ( outp != "[" ) outp += ",";
 	      	 outp += "{\"id\":\""   + rset.getString(1) + "\",";
 		outp += "\"fname\":\"" + rset.getString(2)+ "\",";
-		outp += "\"lname\":\""+ rset.getString(3)+ "\"}";
+		outp += "\"lname\":\""+ rset.getString(3)+ "\",";
+		outp += "\"games\":" + gameStr+ "}";
 	      }
 	      outp += "]" ;
 		// Print the JSON object outp.

@@ -35,31 +35,25 @@ if(!isset($_SESSION['username'])){
   function myFunction( response ) {
     var arr = JSON.parse( response );
     var i;
-    var out  = "<table class='table table-bordered'><tr><th>Select</th>" +
+    var out  = "<table class='table table-bordered'><tr><th>Select</th> <th>Purchase quantity</th>" +
                "<th>Title</th>" +
 		"<th>Developer</th>" +
-               "<th>Purchase quantity</th></tr>";
+               "</tr>";
     for ( i = 0; i < arr.length; i++ ) {
      out += "<tr><td>"  +
-	    "<tr><td><input type='checkbox' name='asins' value='"+ arr[i].ASIN +"'>" +
+	    "<tr><td><input type='checkbox' class='checkbox'  name='asins' value='"+ arr[i].ASIN +"'>" +
+	     "</td><td><input type='number' class='field' disabled  name='quantities' min=0 value=0 >"+
             "</td><td> <a href='view-game.php?ISBN="+ arr[i].ASIN +"'>" + arr[i].title + "</a>"+
             "</td><td>" + arr[i].developer +
-            "</td><td><input type='number' name='quantities' min=0 value=0 >"+
+           
             "</td></tr>";
     }
-    out += "</table>"
+    out += "</table>";
     document.getElementById( "game-table" ).innerHTML = out;
-   }
-
-$('input[name="asins"]').on('click', function() {
-   if ($(this).is(':checked')) {
-      $(this).siblings("input[type=number]").attr('quantities').removeProp("disabled");
-   }
-   else {
-      $(this).siblings("input[type=number]").attr('quantities').prop("disabled", "disabled");
-   }
-});
-
+	$('.checkbox').change(function() {
+		  $(this).parent().next().find('.field').prop('disabled', !$(this).is(':checked'))
+	});
+  	 }
 </script>
 
 <body>

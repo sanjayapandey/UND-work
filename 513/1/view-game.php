@@ -65,37 +65,33 @@ include("config.php");
 				</div>
 			</div>
 			<div class="col-sm-8">
-			<h2>View Game</h2>
-			   
 			   <form class="form-horizontal" method="post" action="../../cgi-bin/513/1/updateGame.cgi">
 				<input type="hidden" id="ISBN" name="ISBN" value="<?php echo $_GET['ISBN'] ?>">
-			    <div class="form-group">
-				    <label for="ISBN">ASIN(unique) </label>
-				   <div id="name-asin"></div>
-			 	 </div>
-			 	  <div class="form-group">
-				    <label for="title">Title</label>
-				    <div id="name-title"></div>
-			 	 </div>
-			 	 <div class="form-group">
-				    <label for="price">Price</label>
-				    <div id="name-price"></div>
-			 	 </div>
-				<div class="form-group">
-				    <label for="developers">Developers</label>
-				    <div id="name-developer"></div>		   
-			 	 </div>
-				<input type="hidden" name="action" value="addDeveloper">
-				<br><br><br>
-				  <div class="row">
-					<div class="col-sm-12 box">
-					<h3> Add New Developer
-						<div id="developer-select-list"></div>
-						<div class="pull-right">
-						<input type="submit" class="btn btn-primary " name="submit" value="Save new developer">	
-						</div>				
-					</div>
-				  </div>
+				<div class="row">
+					<div class="panel panel-default">
+						<h3>Game Information</h3>
+						<div class="panel-body">
+							<label for="ISBN">ASIN(unique) </label>
+				   			<div id="name-asin"></div>
+							<label for="title">Title</label>
+		                                        <div id="name-title"></div>
+							 <label for="price">Price</label>
+				   			 <div id="name-price"></div>
+							<label for="developers">Developers</label>
+				   			 <div id="name-developer"></div>
+						</div>
+						<br>
+						  <div class="row">
+							<div class="col-sm-12 box">
+							<input type="hidden" name="action" value="addDeveloper">
+							<h4> Add New Developer</h4>
+								<div id="developer-select-list"></div>
+								<div class="pull-right">
+								<input type="submit" class="btn btn-primary " name="submit" value="Save new developer">	
+								</div>				
+							</div>
+						  </div>
+					</div>				
 			 	</form> 
 		    </div>
 		  </div>
@@ -114,15 +110,23 @@ include("config.php");
            success: function(data)
            {    
 		var arr = JSON.parse( data);
-                document.getElementById('name-asin').innerHTML =arr[0].ASIN;
+                document.getElementById('name-asin').innerHTML=arr[0].ASIN;
 		document.getElementById('name-title').innerHTML=arr[0].title;
 		document.getElementById('name-price').innerHTML=arr[0].price;
-		document.getElementById('name-developer').innerHTML=arr[0].developer;
-		}    
-     });
-    $('#developer-list').multiselect({
-	includeSelectAllOption: true
-    });
+		
+		var arr1 = JSON.parse( JSON.stringify(arr[0].developers));
+		var i;
+		var out  = "<table class='table table-bordered'><tr><th>S.N</th><th>Developer Name</th></tr>";
+		for ( i = 0; i < arr1.length; i++){
+			var counter = i+1;
+			out+= "<tr><td>"  + counter +
+            		"</td><td> <a href='view-developer.php?id="+arr1[i].id+"'>"+arr1[i].developer+"</a></td></tr>";
+		}
+		 out+= "</table>";
+		document.getElementById('name-developer').innerHTML=out;
+		
+	   }
+	}); 
 
 </script>
 
@@ -144,7 +148,7 @@ include("config.php");
     for ( i = 0; i < arr.length; i++){ out += "<option value='"  + arr[i].id +
 		    "'> "+arr[i].name+"</option>";
     }
-    out += "</select>"
+    out += "</select>";
     document.getElementById( "developer-select-list" ).innerHTML = out;
     $('#developer-list').multiselect({
 	includeSelectAllOption: true

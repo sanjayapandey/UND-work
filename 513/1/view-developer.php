@@ -65,26 +65,22 @@ include("config.php");
 				</div>
 			</div>
 			<div class="col-sm-8">
-			<h2>View Developer</h2>
 			   <input type="hidden" id="id" name="id" value="<?php echo $_GET['id'] ?>">
-			   <form class="form-horizontal" method="post" action="#">
-			    <div class="form-group">
-				    <label for="ISBN">Developer Id </label>
-				   <div id="name-id"></div>
-			 	 </div>
-			 	  <div class="form-group">
-				    <label for="title">First Name</label>
-				    <div id="name-fname"></div>
-			 	 </div>
-			 	 <div class="form-group">
-				    <label for="price">Last Name</label>
-				    <div id="name-lname"></div>
-			 	 </div>
-				<div class="form-group">
-				    <label for="games">Developed Games</label>
-				    List of Games:		   
-			 	 </div>
-			 	</form> 
+				<div class="row">
+					<div class="panel panel-default">
+						<h3>Developer Information</h3>
+						<div class="panel-body">
+							<label for="ISBN">Developer Id </label>
+				  			<div id="name-id"></div>
+							<label for="title">First Name</label>
+				    			<div id="name-fname"></div>
+							 <label for="price">Last Name</label>
+				   			<div id="name-lname"></div><hr>
+							<label for="games">Developed Games</label>
+				   			<div id="name-games"></div>
+						</div>
+					</div>
+				</div>
 		    </div>
 		  </div>
 		   
@@ -107,7 +103,16 @@ include("config.php");
                 document.getElementById('name-id').innerHTML =arr[0].id;
 		document.getElementById('name-fname').innerHTML=arr[0].fname;
 		document.getElementById('name-lname').innerHTML=arr[0].lname;
-		
+		var arr1 = JSON.parse( JSON.stringify(arr[0].games));
+		var i;
+		var out  = "<table class='table table-bordered'><tr><th>S.N</th><th>Game Title</th></tr>";
+		for ( i = 0; i < arr1.length; i++){
+			var counter = i+1;
+			out+= "<tr><td>"  + counter +
+            		"</td><td> <a href='view-game.php?ISBN="+arr1[i].ASIN+"'>"+arr1[i].Title+"</a></td></tr>";
+		}
+		 out+= "</table>";
+		document.getElementById('name-games').innerHTML=out;
 		}    
      });
 
