@@ -8,6 +8,6 @@ print ( "Content-type: text/html\n\n" );
 # Use "here-doc" syntax.
 # Compose a Java command.
 $cmd    =  "/usr/bin/java -Djava.security.egd=file:/dev/./urandom Game search ";
-$cmd   .=  "'$searchTitle' ";
+$cmd   .=  "' $searchTitle' ";
 #print($cmd);
 system( $cmd );

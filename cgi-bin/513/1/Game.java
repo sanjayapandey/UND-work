@@ -195,7 +195,8 @@ class  Game{
 		Boolean emptySearch = true;
 		String subQuery = "";
 		for(int i=0;i<keys.length;i++){
-			if(!subQuery.isEmpty()){subQuery+=" or ";}
+			if(!subQuery.isEmpty()){
+			subQuery+=" or ";}
 			subQuery+="REGEXP_LIKE (d.name.fname, '"+keys[i]+"', 'i') or REGEXP_LIKE (d.name.lname, '"+keys[i]+"', 'i')";
 		}
 		if(keys.length >0){
