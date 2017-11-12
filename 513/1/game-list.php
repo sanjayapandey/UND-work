@@ -96,9 +96,11 @@ if(!isset($_SESSION['username'])){
 			</div>
 			<div class="col-sm-8">
 			<a href="add-game.php" class="btn btn-primary btn-flat pull-right" style="border-radius: 50%;"> Add New Game </a>
-			<h2>List Games</h2>
+			<h3>List Games</h3>
 			<div class="row">
-				<form class="form-horizontal" method="post" action="../../cgi-bin/513/1/updatePrice.cgi">
+				<div id="purchaseSuccess" class="alert alert-success" style="display:none"> Price updated successfully. </div>
+			  	<div id="purchaseError" class="alert alert-danger" style="display:none"> Something went wrong, try again ! </div>
+				<form id="updatePrice" class="form-horizontal" method="post">
 				<div id="game-table"></div>
 				 	<div class="row">
 					<div class="col-sm-12 box">
@@ -118,4 +120,27 @@ if(!isset($_SESSION['username'])){
 		   
 		 </div>
 </body>
+<script type="text/javascript">
+$("#updatePrice").submit(function(e) {
+    var url = "../../cgi-bin/513/1/updatePrice.cgi";
+	
+    $.ajax({
+           type: "POST",
+           url: url,
+           data: $("#updatePrice").serialize(), // serializes the form's elements.
+           success: function(data)
+           {	
+		var arr = JSON.parse( data);		
+		if(arr[0].success === "true"){
+			
+			$("#purchaseSuccess").show();
+		}else{
+			$("#purchaseError").show();
+		}
+				
+	    }
+         });
+    e.preventDefault(); // avoid to execute the actual submit of the form.
+});
+</script>
 </html>

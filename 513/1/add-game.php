@@ -90,8 +90,9 @@ if(!isset($_SESSION['username'])){
 			</div>
 			<div class="col-sm-8">
 			<h2>Add new game</h2>
-
-			   <form class="form-horizontal" method="post" action="../../cgi-bin/513/1/game.cgi">
+			   <div id="purchaseSuccess" class="alert alert-success" style="display:none"> New game created successfully. </div>
+			   <div id="purchaseError" class="alert alert-danger" style="display:none"> Something went wrong, try again ! </div>
+			   <form id="addGame" class="form-horizontal" method="post" >
 			    <div class="form-group">
 				    <label for="ISBN">ASIN(unique) <strong>*</strong></label>
 				    <input type="text" class="form-control" name="ISBN" placeholder="ASIN" required>
@@ -119,4 +120,27 @@ if(!isset($_SESSION['username'])){
 		   
 		 </div>
 </body>
+<script type="text/javascript">
+$("#addGame").submit(function(e) {
+    var url = "../../cgi-bin/513/1/game.cgi";
+	
+    $.ajax({
+           type: "POST",
+           url: url,
+           data: $("#addGame").serialize(), // serializes the form's elements.
+           success: function(data)
+           {	
+		var arr = JSON.parse( data);		
+		if(arr[0].success === "true"){
+			$("#addGame")[0].reset();
+			$("#purchaseSuccess").show();
+		}else{
+			$("#purchaseError").show();
+		}
+				
+	    }
+         });
+    e.preventDefault(); // avoid to execute the actual submit of the form.
+});
+</script>
 </html>

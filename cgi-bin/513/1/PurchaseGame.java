@@ -28,10 +28,13 @@ class  PurchaseGame{
 	for(int i=0;i<ASINs.length;i++){
 		CallableStatement cs = conn.prepareCall("{call purchaseGame("+args[0]+",string_table('"+ASINs[i]+"'),"+quantities[i]+")}");
 		cs.execute();
-		System.out.println("success");
 		cs.close();
 		//rset.close( );
-}
+	}
+	String  outp = "[";
+	outp += "{\"success\":\""+ true+ "\"}";
+	outp += "]" ;
+	System.out.println(outp);
     }
     catch (Exception ex ) {
       System.out.println( ex );

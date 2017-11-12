@@ -85,11 +85,13 @@ class  Game{
 		rset.close( );
 		subQuery = subQuery + ")";
 		query  = "insert into game values('"+args[1]+"','"+args[2]+"',"+subQuery+","+args[4]+")";
-		System.out.println( query + "<b>" );
 		rset = stmt.executeQuery( query );
-
 	    // Close the ResultSet and Statement.
-	      rset.close( );	
+	      rset.close( );
+		String  outp = "[";
+		outp += "{\"success\":\""+ true+ "\"}";
+		outp += "]" ;
+		System.out.println(outp);	
 	}else if(args[0].equalsIgnoreCase("list")){
 		query="select asin, title, price from game";
 		rset = stmt.executeQuery( query );
@@ -121,7 +123,6 @@ class  Game{
 	       rset.close( );
 	}else if(args[0].equalsIgnoreCase("addDeveloper")){
 		String asin = args[1];
-		System.out.println("asin is: >>>>"+asin);
 		String developerIds = args[2];
                 //remove last ' from string
                 if (developerIds != null && developerIds.length() > 0) {
@@ -170,12 +171,13 @@ class  Game{
 				"END LOOP;"+
 				"  CLOSE  DeveloperCursor;"+		
 				"END;";
-		System.out.println(plsql);
 		CallableStatement cs = conn.prepareCall(plsql);
 		cs.execute();
-		System.out.println("success");
 		cs.close();
-		//rset.close( );
+		String  outp = "[";
+		outp += "{\"success\":\""+ true+ "\"}";
+		outp += "]" ;
+		System.out.println(outp);
 		
 	}else if (args[0].equalsIgnoreCase("updatePrice")){
 		String[] ASINs = args[1].split(",");
@@ -183,12 +185,15 @@ class  Game{
 
 	      /*Adding elements to HashMap*/
 		for(int i=0;i<ASINs.length;i++){
-			System.out.println("ASIN is: "+ASINs[i] +" and price is: "+prices[i]);	
 			query = "update game set price="+prices[i]+" where ASIN='"+ASINs[i]+"'";
 			Statement stmt1 = conn.createStatement( );
 			stmt1.executeQuery( query );
 			stmt1.close();	
 		}
+		String  outp = "[";
+		outp += "{\"success\":\""+ true+ "\"}";
+		outp += "]" ;
+		System.out.println(outp);
 	}else if (args[0].equalsIgnoreCase("search")){
 		String[] keys = args[1].split("\\s+");
 		/* query construction for search */

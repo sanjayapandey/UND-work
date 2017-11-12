@@ -92,7 +92,9 @@ if(!isset($_SESSION['username'])){
 			<div class="col-sm-8">
 			<h2>List Developers</h2>
 			<div class="row">
-			<form class="form-horizontal" method="post" action="../../cgi-bin/513/1/deleteDeveloper.cgi">
+			<div id="purchaseSuccess" class="alert alert-success" style="display:none"> Developer deleted successfully. </div>
+			<div id="purchaseError" class="alert alert-danger" style="display:none"> Something went wrong, try again ! </div>
+			<form id="deleteDeveloper" class="form-horizontal" method="post" >
 				<div id="developer-table"></div>
 			<br><br>
 				  <div class="row">
@@ -112,4 +114,26 @@ if(!isset($_SESSION['username'])){
 		   
 		 </div>
 </body>
+<script type="text/javascript">
+$("#deleteDeveloper").submit(function(e) {
+    var url = "../../cgi-bin/513/1/deleteDeveloper.cgi";
+	
+    $.ajax({
+           type: "POST",
+           url: url,
+           data: $("#deleteDeveloper").serialize(), // serializes the form's elements.
+           success: function(data)
+           {	window.location.reload();
+		var arr = JSON.parse( data);		
+		if(arr[0].success === "true"){
+			$("#purchaseSuccess").show();
+		}else{
+			$("#purchaseError").show();
+		}
+				
+	    }
+         });
+    e.preventDefault(); // avoid to execute the actual submit of the form.
+});
+</script>
 </html>

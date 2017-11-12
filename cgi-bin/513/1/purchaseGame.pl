@@ -17,15 +17,5 @@ my @quantities = $query->param( 'quantities' );
   foreach my $quantity (@quantities) { $qty .= $quantity . ","; }
 $cmd   .= "'$qty' ";
 
-print( $cmd );
+#print( $cmd );
 system($cmd);
-print <<EndofHTML;
-	</b>Game successfully Updated,Back to Game: <a href="http://people.aero.und.edu/~spandey/513/1/game-list.php"
-							class="btn btn-primary"> Back to Game Page </a>
-       </b></font>
-      </td>
-     </tr>
-    </table>
-   </body>
-  </html>
-EndofHTML

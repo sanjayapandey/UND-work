@@ -107,9 +107,11 @@ if(!isset($_SESSION['username'])){
 					</div>
 				</div>
 				<div class="row">
-					<h2>List of Games</h2>
+					<h4>List of Games</h4>
 				</div>
-				<form action="../../cgi-bin/513/1/purchaseGame.cgi" method="POST">
+				<div id="purchaseSuccess" class="alert alert-success" style="display:none"> Purchase is successfull. </div>
+				<div id="purchaseError" class="alert alert-danger" style="display:none"> Something went wrong while purchasing, try again ! </div>		
+				<form id="purchaseGame" method="POST">
 				<input type='hidden' name='userId' value="<?php echo $_SESSION['userid']?>">
 				<div id="game-table"></div>
 				<div class="row">
@@ -118,31 +120,20 @@ if(!isset($_SESSION['username'])){
 					</div>
 				</div>
 				</form>
-				<?php   
-				//if cart has already list, no need to initialize again
-				if(!isset($_SESSION['cart']) || empty($_SESSION['cart'])) {
-					$_SESSION['cart']= array();
-				}
-				if(isset($_POST['addToCart'])){ //check if cart form was submitted
-					if(isset($_POST['asins']) && is_array($_POST['asins'])){
-						foreach($_POST['asins'] as $checkbox){
-							array_push($_SESSION['cart'],$checkbox);
-						}
-					}
-				}
-				?>
+				
 			</div>
 		  </div>
-		  <?php if($_SESSION['username'] == 'adminadmin'){?>
-		  <div class="row">
+		  <?php if($_SESSION['username'] == 'admin'){?>
+		  <div class="row"><br><br><br>
 		  	<div class="col-sm-2"></div>
 		  	<div class="col-sm-8">
 		  	<div class="panel panel-default">
 						<div class="panel-body">
-							<a href="reset.php" class="btn btn-primary btn-flat pull-left"> Clear System </a>
+							<a href="reset.php" class="btn btn-warning btn-flat pull-left"> Clear System </a>
 			  				<form action="#" method="POST">
 			  					<input type="hidden" name="fileName" value="dashboard.php">
-			  					<input type="submit" class="btn btn-primary btn-flat pull-right" name="source" value="source">
+								<a href="https://github.com/sanjayapandey/UND-work/tree/dev" target="_blank" class="btn btn-info btn-flat pull-right"> Github Source </a>
+								<input type="submit" class="btn btn-primary btn-flat pull-right" name="source" value="source">
 			  				</form>
 						</div>
 				</div>
@@ -165,47 +156,6 @@ if(!isset($_SESSION['username'])){
 		  </div>
 		  <?php }?>
 		 </div>
-		 <?php 
-		 /*
-		  * Algorithm to find Longest Common Subsequence
-		  * 
-		  * function LCSLength(X[1..m], Y[1..n])
-		    C = array(0..m, 0..n)
-		    for i := 0..m
-		       C[i,0] = 0
-		    for j := 0..n
-		       C[0,j] = 0
-		    for i := 1..m
-		        for j := 1..n
-		            if X[i] = Y[j]
-		                C[i,j] := C[i-1,j-1] + 1
-		            else
-		                C[i,j] := max(C[i,j-1], C[i-1,j])
-		    return C[m,n]
-		  */
-		 function LCSLength ($array1, $array2){
-		 	$temp = array();
-		 	for ($i=0;$i<=sizeof($array1);$i++){
-		 		$temp[$i][0]=0;
-		 	}
-		 	for($j=0;$j<=sizeof($array2);$j++){
-		 		$temp[0][$j]=0;
-		 	}
-		 	for ($i=0;$i<sizeof($array1);$i++){
-				$posX=$i+1;
-				for ($j=0;$j<sizeof($array2);$j++){
-					$posY=$j+1;
-					if (strcasecmp($array1[$i], $array2[$j]) == 0) {
-						$temp[$posX][$posY] = $temp[$posX-1][$posY-1]+1;
-					}else {
-						$temp[$posX][$posY] = max($temp[$posX][$posY-1], $temp[$posX-1][$posY]);
-					}
-				}
-			}
-			return $temp[sizeof($array1)][sizeof($array2)];
-		 }
-		 
-		 ?>
 </body>
 <script type="text/javascript">
 
@@ -219,6 +169,28 @@ $("#searchGame").submit(function(e) {
            success: function(data)
            {	
 		myFunction(data);		
+	    }
+         });
+    e.preventDefault(); // avoid to execute the actual submit of the form.
+});
+
+$("#purchaseGame").submit(function(e) {
+    var url = "../../cgi-bin/513/1/purchaseGame.cgi";
+	
+    $.ajax({
+           type: "POST",
+           url: url,
+           data: $("#purchaseGame").serialize(), // serializes the form's elements.
+           success: function(data)
+           {	
+		var arr = JSON.parse( data);		
+		if(arr[0].success === "true"){
+			$("#purchaseGame")[0].reset();
+			$("#purchaseSuccess").show();
+		}else{
+			$("#purchaseError").show();
+		}
+				
 	    }
          });
     e.preventDefault(); // avoid to execute the actual submit of the form.

@@ -61,7 +61,9 @@ if(!isset($_SESSION['username'])){
 				</div>
 			</div>
 			<div class="col-sm-8">
-			   <form class="form-horizontal" method="post" action="../../cgi-bin/513/1/updateGame.cgi">
+			   <div id="purchaseSuccess" class="alert alert-success" style="display:none"> New developer added successfully. </div>
+			   <div id="purchaseError" class="alert alert-danger" style="display:none"> Something went wrong, try again ! </div>
+			   <form id="addDeveloper" class="form-horizontal" method="post" >
 				<input type="hidden" id="ISBN" name="ISBN" value="<?php echo $_GET['ISBN'] ?>">
 				<div class="row">
 					<div class="panel panel-default">
@@ -151,5 +153,27 @@ if(!isset($_SESSION['username'])){
 	});
    }
 
+</script>
+<script type="text/javascript">
+$("#addDeveloper").submit(function(e) {
+    var url = "../../cgi-bin/513/1/updateGame.cgi";
+	
+    $.ajax({
+           type: "POST",
+           url: url,
+           data: $("#addDeveloper").serialize(), // serializes the form's elements.
+           success: function(data)
+           {	window.location.reload();
+		var arr = JSON.parse( data);		
+		if(arr[0].success === "true"){
+			$("#purchaseSuccess").show();
+		}else{
+			$("#purchaseError").show();
+		}
+				
+	    }
+         });
+    e.preventDefault(); // avoid to execute the actual submit of the form.
+});
 </script>
 </html>

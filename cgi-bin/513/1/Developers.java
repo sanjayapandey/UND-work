@@ -80,9 +80,11 @@ class  Developers{
 		}
 		 CallableStatement cs = conn.prepareCall("{call deleteDeveloper(string_table("+developerIds+"))}");
 		cs.execute();
-		System.out.println("success");
 		cs.close();
-		//rset.close( );
+		String  outp = "[";
+		outp += "{\"success\":\""+ true+ "\"}";
+		outp += "]" ;
+		System.out.println(outp);
 	}
       
     // Close the ResultSet and Statement.
