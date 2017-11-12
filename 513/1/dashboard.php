@@ -53,7 +53,7 @@ if(!isset($_SESSION['username'])){
 	$('.checkbox').change(function() {
 		  $(this).parent().next().find('.field').prop('disabled', !$(this).is(':checked'))
 	});
-  	 }
+  }
 </script>
 
 <body>
@@ -70,11 +70,8 @@ if(!isset($_SESSION['username'])){
 				</div>
 			</div>
 			<div class="col-sm-3">
-				<a href="cart.php" style="font-size: 25px;">
-		          <span class="glyphicon glyphicon-shopping-cart">Cart</span>
-		        </a>
 		        <div class="pull-right">
-			  	<a href = "profile.php"><i class="glyphicon glyphicon-user"></i>&nbsp;&nbsp; <strong><?php echo $_SESSION['username']?></strong></a>&nbsp;&nbsp;&nbsp;
+			  	<a href = "view-customer.php?id=<?php echo $_SESSION['userid']?>"><i class="glyphicon glyphicon-user"></i>&nbsp;&nbsp; <strong><?php echo $_SESSION['username']?></strong></a>&nbsp;&nbsp;&nbsp;
 			  	 <a href="logout.php" class="btn btn-danger btn-flat"> Logout </a>
 			  	</div>
 			  </div>
@@ -100,7 +97,7 @@ if(!isset($_SESSION['username'])){
 			<div class="col-sm-8">
 				<div id="custom-search-input">
 					<div class="input-group col-md-12">
-						<form method="post" action="#">
+						<form id="searchGame" method="post" action="#">
 							<input type="text" class="form-control input-lg" name="searchTitle"
 								placeholder="Search by game name" value= "<?php if (isset($_POST['searchTitle'])) {
 									echo $_POST['searchTitle'];
@@ -210,4 +207,21 @@ if(!isset($_SESSION['username'])){
 		 
 		 ?>
 </body>
+<script type="text/javascript">
+
+$("#searchGame").submit(function(e) {
+    var url = "http://people.aero.und.edu/~spandey/cgi-bin/513/1/searchGame.cgi";
+	
+    $.ajax({
+           type: "POST",
+           url: url,
+           data: $("#searchGame").serialize(), // serializes the form's elements.
+           success: function(data)
+           {	
+		myFunction(data);		
+	    }
+         });
+    e.preventDefault(); // avoid to execute the actual submit of the form.
+});
+</script>
 </html>

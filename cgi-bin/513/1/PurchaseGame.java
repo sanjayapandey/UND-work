@@ -62,7 +62,7 @@ class  PurchaseGame{
 "    else"+
 "        update TABLE(select customer.purchases from customer where customer.id = customerId) set quantity = quantity + "+quantities[i]+" where asin =a;"+
 "    end if;"+
-"    update customer set customer.amount = customer.amount + 1*b where id = customerId;"+
+"    update customer set customer.amount = customer.amount + "+quantities[i]+"*b where id = customerId;"+
 "  END LOOP;"+
 "  /* Free cursor used by the query. */"+
 "  CLOSE  GameCursor;"+

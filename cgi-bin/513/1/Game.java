@@ -189,6 +189,49 @@ class  Game{
 			stmt1.executeQuery( query );
 			stmt1.close();	
 		}
+	}else if (args[0].equalsIgnoreCase("search")){
+		String[] keys = args[1].split("\\s+");
+		/* query construction for search */
+		Boolean emptySearch = true;
+		String subQuery = "";
+		for(int i=0;i<keys.length;i++){
+			if(!subQuery.isEmpty()){subQuery+=" or ";}
+			subQuery+="REGEXP_LIKE (d.name.fname, '"+keys[i]+"', 'i') or REGEXP_LIKE (d.name.lname, '"+keys[i]+"', 'i')";
+		}
+		if(keys.length >0){
+			emptySearch = false;
+			 query="select g.asin, g.title,g.price, (select count(*) from table(g.developers) d where "+subQuery+") as counter from game g order by counter DESC";
+		}else{
+			query="select g.asin, g.title,g.price, (select count(*) from table(g.developers) d) as counter from game g";
+		}
+		rset = stmt.executeQuery( query );
+		
+	    	 // Iterate through the result and save the data.
+		 String  outp = "[";
+               while ( rset.next( ) ) {
+		if(rset.getInt(4)==0 && !emptySearch) continue;
+                 if ( outp != "[" ) outp += ",";
+                 outp += "{\"ASIN\":\""   + rset.getString(1) + "\",";
+                outp += "\"title\":\""   + rset.getString(2) + "\",";
+                 outp += "\"price\":\"" + rset.getString(3) + "\",";
+                //  select g.ASIN, g.title, g.price , d.id, value(d).name.fname from game g, TABLE(select g.developers from game g where g.ASIN='ASIN-9877') d
+                String tempQuery = "select d.id, value(d).name.fname, value(d).name.lname from TABLE(select g.developers from game g where g.ASIN='"+ rset.getString(1)+"') d";
+                Statement stmt1 = conn.createStatement( );
+                ResultSet rset1 = stmt1.executeQuery( tempQuery );
+                String developers = "";
+                int index = 1;
+                while ( rset1.next( ) ) {
+                        developers = developers + index+ ": "+ rset1.getString(2) + " " + rset1.getString(3)+"<br>";
+                        index++;
+                }
+                 outp += "\"developer\":\"" + developers+ "\"}";
+                rset1.close( );
+               }
+               outp += "]" ;
+               // Print the JSON object outp.
+               System.out.println( outp );
+               // Close the ResultSet and Statement.
+               rset.close( );
 	}
      
      

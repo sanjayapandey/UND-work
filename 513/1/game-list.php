@@ -5,7 +5,6 @@ session_start();
 if(!isset($_SESSION['username'])){
 	header("Location: login.php");
 }
-include("config.php");
 ?>
 <head>
   <meta charset="utf-8">
@@ -71,11 +70,8 @@ include("config.php");
 				</div>
 			</div>
 			<div class="col-sm-3">
-				<a href="cart.php" style="font-size: 25px;">
-		          <span class="glyphicon glyphicon-shopping-cart">Cart</span>
-		        </a>
 		        <div class="pull-right">
-			  	<a href = "profile.php"><i class="glyphicon glyphicon-user"></i>&nbsp;&nbsp; <strong><?php echo $_SESSION['username']?></strong></a>&nbsp;&nbsp;&nbsp;
+			  	<a href = "view-customer.php?id=<?php echo $_SESSION['userid']?>"><i class="glyphicon glyphicon-user"></i>&nbsp;&nbsp; <strong><?php echo $_SESSION['username']?></strong></a>&nbsp;&nbsp;&nbsp;
 			  	 <a href="logout.php" class="btn btn-danger btn-flat"> Logout </a>
 			  	</div>
 			  </div>
@@ -106,7 +102,6 @@ include("config.php");
 				<div id="game-table"></div>
 				 	<div class="row">
 					<div class="col-sm-12 box">
-						<h3> Delete Developer:</h3>
 						<div class="pull-right">
 						<input type="hidden" name="action" value="updatePrice">
 						<input type="submit" class="btn btn-primary " name="submit" value="Update game price">	
