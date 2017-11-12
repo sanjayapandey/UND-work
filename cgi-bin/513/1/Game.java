@@ -108,7 +108,7 @@ class  Game{
 		String developers = "";
 		int index = 1;
 		while ( rset1.next( ) ) {
-			developers = developers + index+ ": "+ rset1.getString(2) + " " + rset1.getString(3)+"<br>";
+			developers = developers + index+ ":<a href='view-developer.php?id="+rset1.getString(1)+"'>"+ rset1.getString(2) + " " + rset1.getString(3)+"</a><br>";
 			index++;
 		}
 		 outp += "\"developer\":\"" + developers+ "\"}";
