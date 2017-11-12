@@ -80,14 +80,8 @@ class  Developers{
 		if (developerIds != null && developerIds.length() > 0) {
 			developerIds = developerIds.substring(0, developerIds.length() - 1);
 		}
-		//delete from developer table
-		// String  query  = "delete from developer where id in ("+developerIds+")";
-		//ResultSet rset = stmt.executeQuery( query );
-	    	//stmt.executeQuery( query );
-		//delete from game table: 
-		//We need to loop outer to select all asin number and run this query inside loop.
-		//query = "delete TABLE(select g.developers from game g where g.ASIN='ASIN-1234') d where d.id=1;";
-		String plsql="DECLARE"+
+	
+		/*String plsql="DECLARE"+
 		"  a  game.asin%type;"+
 		"  CURSOR  GameCursor  IS SELECT  asin  FROM  game;"+
 		"BEGIN"+
@@ -101,7 +95,8 @@ class  Developers{
 		"  CLOSE  GameCursor;"+
 		"END;";
 		System.out.println(plsql);
-		 CallableStatement cs = conn.prepareCall(plsql);
+		*/
+		 CallableStatement cs = conn.prepareCall("{call deleteDeveloper(string_table("+developerIds+"))}");
 		cs.execute();
 		System.out.println("success");
 		cs.close();
