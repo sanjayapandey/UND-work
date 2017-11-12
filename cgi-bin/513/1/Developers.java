@@ -55,13 +55,11 @@ class  Developers{
 			gameStr += "\"Title\":\"" +rset1.getString(2) + "\"}";
 	       }
 	       gameStr += "]" ;
-		rset1.close( );
-
+	       rset1.close( );
 
 		String  query  = "select value(p).id,value(p).name.fname,value(p).name.lname from developer p where id="+args[1];
-	     ResultSet rset = stmt.executeQuery( query );
+	     	ResultSet rset = stmt.executeQuery( query );
 		// Iterate through the result and save the data.
-		 // Iterate through the result and save the data.
 	      String  outp = "[";
 	      while ( rset.next( ) ) {
 		if ( outp != "[" ) outp += ",";
@@ -80,22 +78,6 @@ class  Developers{
 		if (developerIds != null && developerIds.length() > 0) {
 			developerIds = developerIds.substring(0, developerIds.length() - 1);
 		}
-	
-		/*String plsql="DECLARE"+
-		"  a  game.asin%type;"+
-		"  CURSOR  GameCursor  IS SELECT  asin  FROM  game;"+
-		"BEGIN"+
-		"  delete from developer where id in("+developerIds+");"+
-		"  OPEN  GameCursor;"+
-		"  LOOP"+
-		"    FETCH  GameCursor  INTO  a;"+
-		"    EXIT WHEN  GameCursor%NOTFOUND;"+
-		"   delete TABLE(select g.developers from game g where g.ASIN=a) d where d.id in ("+developerIds+");"+
-		" END LOOP;"+
-		"  CLOSE  GameCursor;"+
-		"END;";
-		System.out.println(plsql);
-		*/
 		 CallableStatement cs = conn.prepareCall("{call deleteDeveloper(string_table("+developerIds+"))}");
 		cs.execute();
 		System.out.println("success");
