@@ -8,4 +8,4 @@ export  CLASSPATH
 echo "Content-type: text/plain"
 echo ""
 
-/usr/bin/java -Djava.security.egd=file:/dev/./urandom  Developers
+/usr/bin/java -Djava.security.egd=file:/dev/./urandom  Developers list

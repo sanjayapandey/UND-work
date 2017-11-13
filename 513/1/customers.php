@@ -5,7 +5,6 @@ session_start();
 if(!isset($_SESSION['username'])){
 	header("Location: login.php");
 }
-include("config.php");
 ?>
 <head>
   <meta charset="utf-8">
@@ -38,11 +37,11 @@ include("config.php");
   function myFunction( response ) {
     var arr = JSON.parse( response );
     var i;
-    var out  = "<table class='table table-bordered'><tr><th>ID</th>" +
-               "<th>Last Name</th></tr>";
+    var out  = "<table class='table table-bordered'><tr><th>Customer Id</th>" +
+               "<th>Customer Name</th></tr>";
     for ( i = 0; i < arr.length; i++ ) {
      out += "<tr><td>"  + arr[i].id +
-            "</td><td>" + arr[i].name +
+            "</td><td> <a href='view-customer.php?id="+ arr[i].id +"'>" + arr[i].name + "</a>"+
             "</td></tr>";
     }
     out += "</table>"
@@ -65,11 +64,8 @@ include("config.php");
 				</div>
 			</div>
 			<div class="col-sm-3">
-				<a href="cart.php" style="font-size: 25px;">
-		          <span class="glyphicon glyphicon-shopping-cart">Cart</span>
-		        </a>
 		        <div class="pull-right">
-			  	<a href = "profile.php"><i class="glyphicon glyphicon-user"></i>&nbsp;&nbsp; <strong><?php echo $_SESSION['username']?></strong></a>&nbsp;&nbsp;&nbsp;
+			  	<a href = "view-customer.php?id=<?php echo $_SESSION['userid']?>"><i class="glyphicon glyphicon-user"></i>&nbsp;&nbsp; <strong><?php echo $_SESSION['username']?></strong></a>&nbsp;&nbsp;&nbsp;
 			  	 <a href="logout.php" class="btn btn-danger btn-flat"> Logout </a>
 			  	</div>
 			  </div>
@@ -93,7 +89,7 @@ include("config.php");
 				</div>
 			</div>
 			<div class="col-sm-8">
-			<h2>List Customer</h2>
+			<h2>List Customers</h2>
 			<div class="row">
 				<div id="customer-table">
 			</div>

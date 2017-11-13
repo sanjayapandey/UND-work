@@ -3,11 +3,13 @@ import  java.sql.*;
 import  java.io.*;
 import  oracle.jdbc.*;
 import  oracle.jdbc.pool.OracleDataSource;
+import java.sql.CallableStatement;
 
-class  Login {
+
+class  PurchaseGame{
   public static void  main( String args[ ] ) throws SQLException {
-    String user     ="spandey";// System.getenv("ORACLE_USER");
-    String password ="sanjaya1";// System.getenv("ORACLE_PASS");
+    String user     = "spandey";//System.getenv("ORACLE_USER");
+    String password = "sanjaya1";// System.getenv("ORACLE_PASS");
     String database = "oracle1.aero.und.edu:1521/cs513.aero.und.edu";
  
     // Open an OracleDataSource and get a connection.
@@ -20,32 +22,25 @@ class  Login {
     try {
       // Create, compose, and execute a statement.
       Statement stmt = conn.createStatement( );
-     String  query  = "select ID from customer c where c.customer.username='"+args[0].trim()+"' and c.customer.password='"+args[1].trim()+"'";
-     ResultSet rset = stmt.executeQuery( query );
-	boolean loggedIn = false;
-	int userId = 0;
-	// Iterate through the result and save the data.
-      while ( rset.next( ) ) {
-        loggedIn = true;
-	userId = Integer.valueOf(rset.getString(1));
-      }
+	ResultSet rset;
+	String[] ASINs = args[1].split(",");
+	String[] quantities = args[2].split(",");
+	for(int i=0;i<ASINs.length;i++){
+		CallableStatement cs = conn.prepareCall("{call purchaseGame("+args[0]+",string_table('"+ASINs[i]+"'),"+quantities[i]+")}");
+		cs.execute();
+		cs.close();
+		//rset.close( );
+	}
 	String  outp = "[";
-	outp += "{\"loggedIn\":\""+ loggedIn+ "\",";
-	outp += "\"userName\":\""+ args[0].trim()+ "\",";
-        outp += "\"userId\":\"" + userId + "\"}";
+	outp += "{\"success\":\""+ true+ "\"}";
 	outp += "]" ;
-	
 	System.out.println(outp);
-
-    // Close the ResultSet and Statement.
-      rset.close( );
-      stmt.close( );
     }
-    catch ( SQLException ex ) {
+    catch (Exception ex ) {
       System.out.println( ex );
     }finally{
     // Close the Connection.
     conn.close( );
-	}
+}
   }
 }

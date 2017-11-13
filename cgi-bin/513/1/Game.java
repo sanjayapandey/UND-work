@@ -3,6 +3,8 @@ import  java.sql.*;
 import  java.io.*;
 import  oracle.jdbc.*;
 import  oracle.jdbc.pool.OracleDataSource;
+import java.sql.CallableStatement;
+
 
 class  Game{
   public static void  main( String args[ ] ) throws SQLException {
@@ -23,7 +25,42 @@ class  Game{
 	String  query = "";
 	ResultSet rset;
 	//case:1 add new game
-	if(args[0].equalsIgnoreCase("add")){
+	if(args[0].equalsIgnoreCase("view")){
+		//  select g.ASIN, g.title, g.price , d.id, value(d).name.fname from game g, TABLE(select g.developers from game g where g.ASIN='ASIN-9877') d
+		String tempQuery = "select d.id, value(d).name.fname, value(d).name.lname from TABLE(select g.developers from game g where g.ASIN='"+ args[1] +"') d";
+		Statement stmt1 = conn.createStatement( );
+		ResultSet rset1 = stmt1.executeQuery( tempQuery );
+		String developers = "";
+		int index = 1;
+		
+		String  devStr = "[";
+		while ( rset1.next( ) ) {
+			if ( devStr != "[" ) devStr += ",";
+		devStr += "{\"id\":\""   + rset1.getString(1) + "\",";		
+		devStr += "\"developer\":\"" +rset1.getString(2) + " " + rset1.getString(3)+ "\"}";
+	       }
+	       devStr += "]" ;
+		rset1.close( );
+
+		query="select asin,title,price from game where asin='"+args[1]+"'";
+		rset = stmt.executeQuery( query );
+		
+	    	 // Iterate through the result and save the data.
+	       String  outp = "[";
+	       while ( rset.next( ) ) {
+		 if ( outp != "[" ) outp += ",";
+		 outp += "{\"ASIN\":\""   + rset.getString(1) + "\",";
+		outp += "\"title\":\""   + rset.getString(2) + "\",";
+		 outp += "\"price\":\"" + rset.getString(3) + "\",";
+		
+		 outp += "\"developers\":" + devStr+ "}";
+	       }
+	       outp += "]" ;
+	       // Print the JSON object outp.
+	       System.out.println( outp );
+	       // Close the ResultSet and Statement.
+	       rset.close( );
+	}else if(args[0].equalsIgnoreCase("add")){
 		/**
 			insert into game values('ISBN123',
 						'Civil war ',
@@ -48,11 +85,13 @@ class  Game{
 		rset.close( );
 		subQuery = subQuery + ")";
 		query  = "insert into game values('"+args[1]+"','"+args[2]+"',"+subQuery+","+args[4]+")";
-		System.out.println( query + "<b>" );
 		rset = stmt.executeQuery( query );
-
 	    // Close the ResultSet and Statement.
-	      rset.close( );	
+	      rset.close( );
+		String  outp = "[";
+		outp += "{\"success\":\""+ true+ "\"}";
+		outp += "]" ;
+		System.out.println(outp);	
 	}else if(args[0].equalsIgnoreCase("list")){
 		query="select asin, title, price from game";
 		rset = stmt.executeQuery( query );
@@ -63,19 +102,148 @@ class  Game{
 		 if ( outp != "[" ) outp += ",";
 		 outp += "{\"ASIN\":\""   + rset.getString(1) + "\",";
 		outp += "\"title\":\""   + rset.getString(2) + "\",";
-		 outp += "\"price\":\"" + rset.getString(3) + "\"}";
+		 outp += "\"price\":\"" + rset.getString(3) + "\",";
+		//  select g.ASIN, g.title, g.price , d.id, value(d).name.fname from game g, TABLE(select g.developers from game g where g.ASIN='ASIN-9877') d
+		String tempQuery = "select d.id, value(d).name.fname, value(d).name.lname from TABLE(select g.developers from game g where g.ASIN='"+ rset.getString(1)+"') d";
+		Statement stmt1 = conn.createStatement( );
+		ResultSet rset1 = stmt1.executeQuery( tempQuery );
+		String developers = "";
+		int index = 1;
+		while ( rset1.next( ) ) {
+			developers = developers + index+ ":<a href='view-developer.php?id="+rset1.getString(1)+"'>"+ rset1.getString(2) + " " + rset1.getString(3)+"</a><br>";
+			index++;
+		}
+		 outp += "\"developer\":\"" + developers+ "\"}";
+		rset1.close( );
 	       }
 	       outp += "]" ;
 	       // Print the JSON object outp.
 	       System.out.println( outp );
 	       // Close the ResultSet and Statement.
 	       rset.close( );
+	}else if(args[0].equalsIgnoreCase("addDeveloper")){
+		String asin = args[1];
+		String developerIds = args[2];
+                //remove last ' from string
+                if (developerIds != null && developerIds.length() > 0) {
+                        developerIds = developerIds.substring(0, developerIds.length() - 1);
+                }
+
+		// Check if that user exists on game or not. 
+		//String[] array = developerIds.split(",");
+		//Step:1 Get all developer id of this specific game
+		/*
+			select id from TABLE(select g.developers from game g where g.ASIN=**);
+		*/
+		//for(int i=0;i<array.length;i++){
+			//try to insert into game, and check for exception. If the exception is constraint voilation exception then simply continue it Otherwise update game table.
+			
+			//Step-1a: Get developer's name 
+		/*	String tempQuery = "select value(p).name.fname, value(p).name.lname from developer p where id ="+array[i];
+			rset = stmt.executeQuery( tempQuery );
+			String subQuery="";
+			while ( rset.next( ) ) {
+				subQuery = array[i]+",name_type('"+rset.getString(1)+"','"+rset.getString(2)+"')";
+			}
+			rset.close( );
+			/*
+			insert into TABLE(select g.developers from game g where g.ASIN='ASIN-1234') values (1,name_type('sanjaya','pandey'))			
+			*/
+		/*	query ="insert into TABLE(select g.developers from game g where g.ASIN='"+asin+"') values ("+subQuery+")";
+			ResultSet newRset = stmt.executeQuery( query );
+			newRset.close( );
+		}
+		*/
+		String plsql = "DECLARE"+
+				" a  developer.id%type;"+
+				" b  developer.name%type;"+
+				" counter integer;"+
+				" CURSOR  DeveloperCursor  IS SELECT id,name  FROM  developer p where id in ("+developerIds+");"+
+				"BEGIN"+
+				"  OPEN  DeveloperCursor;"+
+				"  LOOP"+
+				"    FETCH  DeveloperCursor  INTO  a,b;"+
+				"    EXIT WHEN  DeveloperCursor%NOTFOUND;"+
+				"    SELECT  count(*) into counter from TABLE(select g.developers from game g where g.ASIN='"+asin+"') d where id=a;"+
+				"    if counter=0 then"+
+				"        insert into TABLE(select g.developers from game g where g.ASIN='"+asin+"') values (a,b);"+
+				"    end if;"+
+				"END LOOP;"+
+				"  CLOSE  DeveloperCursor;"+		
+				"END;";
+		CallableStatement cs = conn.prepareCall(plsql);
+		cs.execute();
+		cs.close();
+		String  outp = "[";
+		outp += "{\"success\":\""+ true+ "\"}";
+		outp += "]" ;
+		System.out.println(outp);
+		
+	}else if (args[0].equalsIgnoreCase("updatePrice")){
+		String[] ASINs = args[1].split(",");
+		String[] prices = args[2].split(",");
+
+	      /*Adding elements to HashMap*/
+		for(int i=0;i<ASINs.length;i++){
+			query = "update game set price="+prices[i]+" where ASIN='"+ASINs[i]+"'";
+			Statement stmt1 = conn.createStatement( );
+			stmt1.executeQuery( query );
+			stmt1.close();	
+		}
+		String  outp = "[";
+		outp += "{\"success\":\""+ true+ "\"}";
+		outp += "]" ;
+		System.out.println(outp);
+	}else if (args[0].equalsIgnoreCase("search")){
+		String[] keys = args[1].split("\\s+");
+		/* query construction for search */
+		Boolean emptySearch = true;
+		String subQuery = "";
+		for(int i=0;i<keys.length;i++){
+			if(!subQuery.isEmpty()){
+			subQuery+=" or ";}
+			subQuery+="REGEXP_LIKE (d.name.fname, '"+keys[i]+"', 'i') or REGEXP_LIKE (d.name.lname, '"+keys[i]+"', 'i')";
+		}
+		if(keys.length >0){
+			emptySearch = false;
+			 query="select g.asin, g.title,g.price, (select count(*) from table(g.developers) d where "+subQuery+") as counter from game g order by counter DESC";
+		}else{
+			query="select g.asin, g.title,g.price, (select count(*) from table(g.developers) d) as counter from game g";
+		}
+		rset = stmt.executeQuery( query );
+		
+	    	 // Iterate through the result and save the data.
+		 String  outp = "[";
+               while ( rset.next( ) ) {
+		if(rset.getInt(4)==0 && !emptySearch) continue;
+                 if ( outp != "[" ) outp += ",";
+                 outp += "{\"ASIN\":\""   + rset.getString(1) + "\",";
+                outp += "\"title\":\""   + rset.getString(2) + "\",";
+                 outp += "\"price\":\"" + rset.getString(3) + "\",";
+                //  select g.ASIN, g.title, g.price , d.id, value(d).name.fname from game g, TABLE(select g.developers from game g where g.ASIN='ASIN-9877') d
+                String tempQuery = "select d.id, value(d).name.fname, value(d).name.lname from TABLE(select g.developers from game g where g.ASIN='"+ rset.getString(1)+"') d";
+                Statement stmt1 = conn.createStatement( );
+                ResultSet rset1 = stmt1.executeQuery( tempQuery );
+                String developers = "";
+                int index = 1;
+                while ( rset1.next( ) ) {
+                        developers = developers + index+ ": "+ rset1.getString(2) + " " + rset1.getString(3)+"<br>";
+                        index++;
+                }
+                 outp += "\"developer\":\"" + developers+ "\"}";
+                rset1.close( );
+               }
+               outp += "]" ;
+               // Print the JSON object outp.
+               System.out.println( outp );
+               // Close the ResultSet and Statement.
+               rset.close( );
 	}
      
      
-      stmt.close( );
+      //stmt.close( );
     }
-    catch ( SQLException ex ) {
+    catch (Exception ex ) {
       System.out.println( ex );
     }finally{
     // Close the Connection.

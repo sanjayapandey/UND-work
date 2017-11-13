@@ -5,7 +5,6 @@ session_start();
 if(!isset($_SESSION['username'])){
 	header("Location: login.php");
 }
-include("config.php");
 ?>
 <head>
   <meta charset="utf-8">
@@ -38,13 +37,17 @@ include("config.php");
   function myFunction( response ) {
     var arr = JSON.parse( response );
     var i;
-    var out  = "<table class='table table-bordered'><tr><th>ISBN</th>" +
+    var out  = "<table class='table table-bordered'><tr><th>ASIN</th>" +
                "<th>Title</th>" +
-               "<th>Price</th></tr>";
+	       "<th>Developers</th>" +
+	       "<th>Price</th>" +
+               "<th>Update Price</th></tr>";
     for ( i = 0; i < arr.length; i++ ) {
      out += "<tr><td>"  + arr[i].ASIN +
-            "</td><td>" + arr[i].title +
+            "</td><td> <a href='view-game.php?ISBN="+ arr[i].ASIN +"'>" + arr[i].title + "</a>"+
+	     "</td><td>" + arr[i].developer +
             "</td><td>" + arr[i].price +
+	    "</td><td><input type='hidden' name='keys'  value='"+arr[i].ASIN+"'><input type=number name='prices' value="+arr[i].price+">"+ 
             "</td></tr>";
     }
     out += "</table>"
@@ -67,11 +70,8 @@ include("config.php");
 				</div>
 			</div>
 			<div class="col-sm-3">
-				<a href="cart.php" style="font-size: 25px;">
-		          <span class="glyphicon glyphicon-shopping-cart">Cart</span>
-		        </a>
 		        <div class="pull-right">
-			  	<a href = "profile.php"><i class="glyphicon glyphicon-user"></i>&nbsp;&nbsp; <strong><?php echo $_SESSION['username']?></strong></a>&nbsp;&nbsp;&nbsp;
+			  	<a href = "view-customer.php?id=<?php echo $_SESSION['userid']?>"><i class="glyphicon glyphicon-user"></i>&nbsp;&nbsp; <strong><?php echo $_SESSION['username']?></strong></a>&nbsp;&nbsp;&nbsp;
 			  	 <a href="logout.php" class="btn btn-danger btn-flat"> Logout </a>
 			  	</div>
 			  </div>
@@ -95,10 +95,24 @@ include("config.php");
 				</div>
 			</div>
 			<div class="col-sm-8">
-			<a href="game.php" class="btn btn-primary btn-flat pull-right" style="border-radius: 50%;"> Add New Game </a>
-			<h2>List Games</h2>
+			<a href="add-game.php" class="btn btn-primary btn-flat pull-right" style="border-radius: 50%;"> Add New Game </a>
+			<h3>List Games</h3>
 			<div class="row">
-				<div id="game-table">
+				<div id="purchaseSuccess" class="alert alert-success" style="display:none"> Price updated successfully. </div>
+			  	<div id="purchaseError" class="alert alert-danger" style="display:none"> Something went wrong, try again ! </div>
+				<form id="updatePrice" class="form-horizontal" method="post">
+				<div id="game-table"></div>
+				 	<div class="row">
+					<div class="col-sm-12 box">
+						<div class="pull-right">
+						<input type="hidden" name="action" value="updatePrice">
+						<input type="submit" class="btn btn-primary " name="submit" value="Update game price">	
+						</div>				
+					  </div>
+					</div>
+				</form>
+			</div>
+
 			</div>
 			   
 		    </div>
@@ -106,4 +120,27 @@ include("config.php");
 		   
 		 </div>
 </body>
+<script type="text/javascript">
+$("#updatePrice").submit(function(e) {
+    var url = "../../cgi-bin/513/1/updatePrice.cgi";
+	
+    $.ajax({
+           type: "POST",
+           url: url,
+           data: $("#updatePrice").serialize(), // serializes the form's elements.
+           success: function(data)
+           {	
+		var arr = JSON.parse( data);		
+		if(arr[0].success === "true"){
+			
+			$("#purchaseSuccess").show();
+		}else{
+			$("#purchaseError").show();
+		}
+				
+	    }
+         });
+    e.preventDefault(); // avoid to execute the actual submit of the form.
+});
+</script>
 </html>

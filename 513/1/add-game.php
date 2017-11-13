@@ -5,7 +5,6 @@ session_start();
 if(!isset($_SESSION['username'])){
 	header("Location: login.php");
 }
-include("config.php");
 ?>
 <head>
   <meta charset="utf-8">
@@ -65,11 +64,8 @@ include("config.php");
 				</div>
 			</div>
 			<div class="col-sm-3">
-				<a href="cart.php" style="font-size: 25px;">
-		          <span class="glyphicon glyphicon-shopping-cart">Cart</span>
-		        </a>
 		        <div class="pull-right">
-			  	<a href = "profile.php"><i class="glyphicon glyphicon-user"></i>&nbsp;&nbsp; <strong><?php echo $_SESSION['username']?></strong></a>&nbsp;&nbsp;&nbsp;
+			  	<a href = "view-customer.php?id=<?php echo $_SESSION['userid']?>"><i class="glyphicon glyphicon-user"></i>&nbsp;&nbsp; <strong><?php echo $_SESSION['username']?></strong></a>&nbsp;&nbsp;&nbsp;
 			  	 <a href="logout.php" class="btn btn-danger btn-flat"> Logout </a>
 			  	</div>
 			  </div>
@@ -94,11 +90,12 @@ include("config.php");
 			</div>
 			<div class="col-sm-8">
 			<h2>Add new game</h2>
-
-			   <form class="form-horizontal" method="post" action="../../cgi-bin/513/1/game.cgi">
+			   <div id="purchaseSuccess" class="alert alert-success" style="display:none"> New game created successfully. </div>
+			   <div id="purchaseError" class="alert alert-danger" style="display:none"> Something went wrong, try again ! </div>
+			   <form id="addGame" class="form-horizontal" method="post" >
 			    <div class="form-group">
-				    <label for="ISBN">ISBN(unique) <strong>*</strong></label>
-				    <input type="text" class="form-control" name="ISBN" placeholder="ISBN" required>
+				    <label for="ISBN">ASIN(unique) <strong>*</strong></label>
+				    <input type="text" class="form-control" name="ISBN" placeholder="ASIN" required>
 			 	 </div>
 			 	  <div class="form-group">
 				    <label for="title">Title<strong>*</strong></label>
@@ -123,4 +120,27 @@ include("config.php");
 		   
 		 </div>
 </body>
+<script type="text/javascript">
+$("#addGame").submit(function(e) {
+    var url = "../../cgi-bin/513/1/game.cgi";
+	
+    $.ajax({
+           type: "POST",
+           url: url,
+           data: $("#addGame").serialize(), // serializes the form's elements.
+           success: function(data)
+           {	
+		var arr = JSON.parse( data);		
+		if(arr[0].success === "true"){
+			$("#addGame")[0].reset();
+			$("#purchaseSuccess").show();
+		}else{
+			$("#purchaseError").show();
+		}
+				
+	    }
+         });
+    e.preventDefault(); // avoid to execute the actual submit of the form.
+});
+</script>
 </html>

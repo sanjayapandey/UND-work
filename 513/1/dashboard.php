@@ -35,20 +35,25 @@ if(!isset($_SESSION['username'])){
   function myFunction( response ) {
     var arr = JSON.parse( response );
     var i;
-    var out  = "<table class='table table-bordered'><tr><th>ISBN</th>" +
+    var out  = "<table class='table table-bordered'><tr><th>Select</th> <th>Purchase quantity</th>" +
                "<th>Title</th>" +
-               "<th>Price</th></tr>";
+		"<th>Developer</th>" +
+               "</tr>";
     for ( i = 0; i < arr.length; i++ ) {
      out += "<tr><td>"  +
-	    "<tr><td>"  + arr[i].ASIN +
-            "</td><td>" + arr[i].title +
-            "</td><td>" + arr[i].price +
+	    "<tr><td><input type='checkbox' class='checkbox'  name='asins' value='"+ arr[i].ASIN +"'>" +
+	     "</td><td><input type='number' class='field' disabled  name='quantities' min=0 value=0 >"+
+            "</td><td> <a href='view-game.php?ISBN="+ arr[i].ASIN +"'>" + arr[i].title + "</a>"+
+            "</td><td>" + arr[i].developer +
+           
             "</td></tr>";
     }
-    out += "</table>"
+    out += "</table>";
     document.getElementById( "game-table" ).innerHTML = out;
-   }
-
+	$('.checkbox').change(function() {
+		  $(this).parent().next().find('.field').prop('disabled', !$(this).is(':checked'))
+	});
+  }
 </script>
 
 <body>
@@ -65,11 +70,8 @@ if(!isset($_SESSION['username'])){
 				</div>
 			</div>
 			<div class="col-sm-3">
-				<a href="cart.php" style="font-size: 25px;">
-		          <span class="glyphicon glyphicon-shopping-cart">Cart</span>
-		        </a>
 		        <div class="pull-right">
-			  	<a href = "profile.php"><i class="glyphicon glyphicon-user"></i>&nbsp;&nbsp; <strong><?php echo $_SESSION['username']?></strong></a>&nbsp;&nbsp;&nbsp;
+			  	<a href = "view-customer.php?id=<?php echo $_SESSION['userid']?>"><i class="glyphicon glyphicon-user"></i>&nbsp;&nbsp; <strong><?php echo $_SESSION['username']?></strong></a>&nbsp;&nbsp;&nbsp;
 			  	 <a href="logout.php" class="btn btn-danger btn-flat"> Logout </a>
 			  	</div>
 			  </div>
@@ -95,51 +97,48 @@ if(!isset($_SESSION['username'])){
 			<div class="col-sm-8">
 				<div id="custom-search-input">
 					<div class="input-group col-md-12">
-						<form method="post" action="#">
-							<input type="text" class="form-control input-lg" name="searchTitle"
+						<form id="searchGame" method="post" action="#">
+							<div class="col-sm-10">
+							<input type="text" class="form-control input-lg pull-left" name="searchTitle"
 								placeholder="Search by game name" value= "<?php if (isset($_POST['searchTitle'])) {
 									echo $_POST['searchTitle'];
-								}?>"/> 
+								}?>"/>
+							</div>
+							<div class="col-sm-2">
+							<button type="submit" name="search" class="btn btn-primary pull-right"><span class="glyphicon glyphicon-search"></span>&nbsp &nbsp Search</button>
+							</div> 
 						</form>
 						<br> <br> <br>
 					</div>
 				</div>
 				<div class="row">
-					<h2>List of Games</h2>
+					<h4>List of Games</h4>
 				</div>
-				<form action="#" method="POST">
+				<div id="purchaseSuccess" class="alert alert-success" style="display:none"> Purchase is successfull. </div>
+				<div id="purchaseError" class="alert alert-danger" style="display:none"> Something went wrong while purchasing, try again ! </div>		
+				<form id="purchaseGame" method="POST">
+				<input type='hidden' name='userId' value="<?php echo $_SESSION['userid']?>">
 				<div id="game-table"></div>
 				<div class="row">
 					<div class="col-sm-12">
-						<input type="submit" class="btn btn-primary btn-sm pull-right" name="addToCart" value="Add selected item to Cart">
+						<input type="submit" class="btn btn-primary btn-sm pull-right" name="purchase" value="Purchase selected items">
 					</div>
 				</div>
 				</form>
-				<?php   
-				//if cart has already list, no need to initialize again
-				if(!isset($_SESSION['cart']) || empty($_SESSION['cart'])) {
-					$_SESSION['cart']= array();
-				}
-				if(isset($_POST['addToCart'])){ //check if cart form was submitted
-					if(isset($_POST['check_list']) && is_array($_POST['check_list'])){
-						foreach($_POST['check_list'] as $checkbox){
-							array_push($_SESSION['cart'],$checkbox);
-						}
-					}
-				}
-				?>
+				
 			</div>
 		  </div>
-		  <?php if($_SESSION['username'] == 'adminadmin'){?>
-		  <div class="row">
+		  <?php if($_SESSION['username'] == 'admin'){?>
+		  <div class="row"><br><br><br>
 		  	<div class="col-sm-2"></div>
 		  	<div class="col-sm-8">
 		  	<div class="panel panel-default">
 						<div class="panel-body">
-							<a href="reset.php" class="btn btn-primary btn-flat pull-left"> Clear System </a>
+							<a href="../../cgi-bin/513/1/reset.cgi" class="btn btn-warning btn-flat pull-left"> Clear System </a>
 			  				<form action="#" method="POST">
 			  					<input type="hidden" name="fileName" value="dashboard.php">
-			  					<input type="submit" class="btn btn-primary btn-flat pull-right" name="source" value="source">
+								<a href="https://github.com/sanjayapandey/UND-work/tree/dev" target="_blank" class="btn btn-info btn-flat pull-right"> Github Source </a>
+								<input type="submit" class="btn btn-primary btn-flat pull-right" name="source" value="source">
 			  				</form>
 						</div>
 				</div>
@@ -162,46 +161,44 @@ if(!isset($_SESSION['username'])){
 		  </div>
 		  <?php }?>
 		 </div>
-		 <?php 
-		 /*
-		  * Algorithm to find Longest Common Subsequence
-		  * 
-		  * function LCSLength(X[1..m], Y[1..n])
-		    C = array(0..m, 0..n)
-		    for i := 0..m
-		       C[i,0] = 0
-		    for j := 0..n
-		       C[0,j] = 0
-		    for i := 1..m
-		        for j := 1..n
-		            if X[i] = Y[j]
-		                C[i,j] := C[i-1,j-1] + 1
-		            else
-		                C[i,j] := max(C[i,j-1], C[i-1,j])
-		    return C[m,n]
-		  */
-		 function LCSLength ($array1, $array2){
-		 	$temp = array();
-		 	for ($i=0;$i<=sizeof($array1);$i++){
-		 		$temp[$i][0]=0;
-		 	}
-		 	for($j=0;$j<=sizeof($array2);$j++){
-		 		$temp[0][$j]=0;
-		 	}
-		 	for ($i=0;$i<sizeof($array1);$i++){
-				$posX=$i+1;
-				for ($j=0;$j<sizeof($array2);$j++){
-					$posY=$j+1;
-					if (strcasecmp($array1[$i], $array2[$j]) == 0) {
-						$temp[$posX][$posY] = $temp[$posX-1][$posY-1]+1;
-					}else {
-						$temp[$posX][$posY] = max($temp[$posX][$posY-1], $temp[$posX-1][$posY]);
-					}
-				}
-			}
-			return $temp[sizeof($array1)][sizeof($array2)];
-		 }
-		 
-		 ?>
 </body>
+<script type="text/javascript">
+
+$("#searchGame").submit(function(e) {
+    var url = "http://people.aero.und.edu/~spandey/cgi-bin/513/1/searchGame.cgi";
+	
+    $.ajax({
+           type: "POST",
+           url: url,
+           data: $("#searchGame").serialize(), // serializes the form's elements.
+           success: function(data)
+           {	
+		myFunction(data);		
+	    }
+         });
+    e.preventDefault(); // avoid to execute the actual submit of the form.
+});
+
+$("#purchaseGame").submit(function(e) {
+    var url = "../../cgi-bin/513/1/purchaseGame.cgi";
+	
+    $.ajax({
+           type: "POST",
+           url: url,
+           data: $("#purchaseGame").serialize(), // serializes the form's elements.
+           success: function(data)
+           {	
+		var arr = JSON.parse( data);		
+		if(arr[0].success === "true"){
+			$("#purchaseGame")[0].reset();
+			$("#purchaseSuccess").show();
+		}else{
+			$("#purchaseError").show();
+		}
+				
+	    }
+         });
+    e.preventDefault(); // avoid to execute the actual submit of the form.
+});
+</script>
 </html>

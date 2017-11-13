@@ -27,7 +27,7 @@ class  Usr {
 		 query  = "insert into developer values(id.NEXTVAL,name_type('"+args[1].trim()+"','"+args[2].trim()+"'))";	
 	}else if(args[0].equalsIgnoreCase("customer")){
 	//case:2 Role=customer
-     		query  = "insert into customer values(id.NEXTVAL,name_type('"+args[1].trim()+"','"+args[2].trim()+"'),'"+args[3]+"','"+args[4]+"')";
+     		query  = "insert into customer values(customer_id.NEXTVAL,customer_type( name_type('"+args[1].trim()+"','"+args[2].trim()+"'),'"+args[3]+"','"+args[4]+"'), purchase_tab(), 0.00)";
 	}
      System.out.println( query + "<b>" );
     ResultSet rset = stmt.executeQuery( query );

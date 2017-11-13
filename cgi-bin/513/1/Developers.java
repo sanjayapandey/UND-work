@@ -3,6 +3,7 @@ import  java.sql.*;
 import  java.io.*;
 import  oracle.jdbc.*;
 import  oracle.jdbc.pool.OracleDataSource;
+import java.sql.CallableStatement;
 
 class  Developers{
   public static void  main( String args[ ] ) throws SQLException {
@@ -20,28 +21,77 @@ class  Developers{
     try {
       // Create, compose, and execute a statement.
       Statement stmt = conn.createStatement( );
-    /**	select value(p).id,value(p).name.fname,value(p).name.lname from developer p;
+    	/**	select value(p).id,value(p).name.fname,value(p).name.lname from developer p;
 
 	**/
-     String  query  = "select value(p).id,value(p).name.fname,value(p).name.lname from developer p";
+	if(args[0].equalsIgnoreCase("list")){
+    	      String  query  = "select value(p).id,value(p).name.fname,value(p).name.lname from developer p";
 
-     ResultSet rset = stmt.executeQuery( query );
-	// Iterate through the result and save the data.
-	 // Iterate through the result and save the data.
-      String  outp = "[";
-      while ( rset.next( ) ) {
-        if ( outp != "[" ) outp += ",";
-      	 outp += "{\"id\":\""   + rset.getString(1) + "\",";
-        outp += "\"name\":\"" + rset.getString(2) +" "+ rset.getString(3)+ "\"}";
-      }
-      outp += "]" ;
-      // Print the JSON object outp.
+	     ResultSet rset = stmt.executeQuery( query );
+		// Iterate through the result and save the data.
+		 // Iterate through the result and save the data.
+	      String  outp = "[";
+	      while ( rset.next( ) ) {
+		if ( outp != "[" ) outp += ",";
+	      	 outp += "{\"id\":\""   + rset.getString(1) + "\",";
+		outp += "\"name\":\"" + rset.getString(2) +" "+ rset.getString(3)+ "\"}";
+	      }
+	      outp += "]" ;
+		// Print the JSON object outp.
       System.out.println( outp );
+		rset.close( );
+
+	}else if(args[0].equalsIgnoreCase("view")){
+		String tempQuery = "SELECT g.asin, g.title from game g, TABLE(g.developers) d where d.id="+args[1];
+		Statement stmt1 = conn.createStatement( );
+		ResultSet rset1 = stmt1.executeQuery( tempQuery );
+		String games = "";
+		int index = 1;
+		
+		String  gameStr = "[";
+		while ( rset1.next( ) ) {
+			if ( gameStr != "[" ) gameStr += ",";
+			gameStr += "{\"ASIN\":\""   + rset1.getString(1) + "\",";		
+			gameStr += "\"Title\":\"" +rset1.getString(2) + "\"}";
+	       }
+	       gameStr += "]" ;
+	       rset1.close( );
+
+		String  query  = "select value(p).id,value(p).name.fname,value(p).name.lname from developer p where id="+args[1];
+	     	ResultSet rset = stmt.executeQuery( query );
+		// Iterate through the result and save the data.
+	      String  outp = "[";
+	      while ( rset.next( ) ) {
+		if ( outp != "[" ) outp += ",";
+	      	 outp += "{\"id\":\""   + rset.getString(1) + "\",";
+		outp += "\"fname\":\"" + rset.getString(2)+ "\",";
+		outp += "\"lname\":\""+ rset.getString(3)+ "\",";
+		outp += "\"games\":" + gameStr+ "}";
+	      }
+	      outp += "]" ;
+		// Print the JSON object outp.
+    	  System.out.println( outp );
+		rset.close( );
+	}else if(args[0].equalsIgnoreCase("deleteDeveloper")){
+		String developerIds = args[1];
+		//remove last ' from string
+		if (developerIds != null && developerIds.length() > 0) {
+			developerIds = developerIds.substring(0, developerIds.length() - 1);
+		}
+		 CallableStatement cs = conn.prepareCall("{call deleteDeveloper(string_table("+developerIds+"))}");
+		cs.execute();
+		cs.close();
+		String  outp = "[";
+		outp += "{\"success\":\""+ true+ "\"}";
+		outp += "]" ;
+		System.out.println(outp);
+	}
+      
     // Close the ResultSet and Statement.
-      rset.close( );
+      
       stmt.close( );
     }
-    catch ( SQLException ex ) {
+    catch ( Exception ex ) {
       System.out.println( ex );
     }finally{
     // Close the Connection.

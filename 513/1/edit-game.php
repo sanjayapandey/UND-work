@@ -23,34 +23,6 @@ if(!isset($_SESSION['username'])){
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.js"></script>
 </head>
 
-<script>
-   var xmlhttp = new XMLHttpRequest( );
-   var url = "../../cgi-bin/513/1/developers.cgi";
-   xmlhttp.onreadystatechange = function( ) {
-    if ( xmlhttp.readyState == 4 && xmlhttp.status == 200 ) {
-     myFunction( xmlhttp.responseText );
-    }
-   }
-   xmlhttp.open( "GET", url, true );
-   xmlhttp.send( );
-
-  function myFunction( response ) {
-    var arr = JSON.parse( response );
-    var i;
-    var out  = "<table class='table table-bordered'><tr><th>Developer Id</th>" +
-               "<th>Full Name</th>"+"<th>Select Developers</th>"+"</tr>";
-    for ( i = 0; i < arr.length; i++ ) {
-     out += "<tr><td>"  + arr[i].id +
-            "</td><td><a href='view-developer.php?id="+ arr[i].id +"'>" + arr[i].name + "</a>"+
-	     "</td><td><input type='checkbox' name='developerIds' value='"+arr[i].id+"'>"+
-            "</td></tr>";
-    }
-    out += "</table>"
-    document.getElementById( "developer-table" ).innerHTML = out;
-   }
-
-</script>
-
 <body>
 <div id="wrapper">
  <!-- Sidebar -->
@@ -90,50 +62,55 @@ if(!isset($_SESSION['username'])){
 				</div>
 			</div>
 			<div class="col-sm-8">
-			<h2>List Developers</h2>
-			<div class="row">
-			<div id="purchaseSuccess" class="alert alert-success" style="display:none"> Developer deleted successfully. </div>
-			<div id="purchaseError" class="alert alert-danger" style="display:none"> Something went wrong, try again ! </div>
-			<form id="deleteDeveloper" class="form-horizontal" method="post" >
-				<div id="developer-table"></div>
-			<br><br>
-				  <div class="row">
-					<div class="col-sm-12 box">
-					<h3> Delete Developer:</h3>
-						<div id="developer-select-list"></div>
-						<div class="pull-right">
-						<input type="hidden" name="action" value="deleteDeveloper">
-						<input type="submit" class="btn btn-danger " name="submit" value="Delete selected developer">	
-						</div>				
-				  </div>
-			</form>
-			</div>
-			   
+			<h2>View Game</h2>
+			   <input type="hidden" id="ISBN" value="<?php echo $_GET['ISBN'] ?>">
+			   <form class="form-horizontal" method="post" action="../../cgi-bin/513/1/game.cgi">
+			    <div class="form-group">
+				    <label for="ISBN">ISBN(unique) <strong>*</strong></label>
+				   <div id="name-asin"></div>
+			 	 </div>
+			 	  <div class="form-group">
+				    <label for="title">Title<strong>*</strong></label>
+				    <div id="name-title"></div>
+			 	 </div>
+			 	 <div class="form-group">
+				    <label for="price">Price<strong>*</strong></label>
+				    <div id="name-price"></div>
+			 	 </div>
+				<div class="form-group">
+				    <label for="developers">Select Developers<strong>*</strong></label>
+				    <div id="developer-select-list">				   
+			 	 </div>
+				<input type="hidden" name="action" value="add">
+				<div class="pull-right">
+				    <a href="edit-game.php?<?php echo $_GET['ISBN'] ?>" class="btn btn-primary ">Edit Game </a>
+				</div>
+			 	</form> 
 		    </div>
 		  </div>
 		   
 		 </div>
 </body>
-<script type="text/javascript">
-$("#deleteDeveloper").submit(function(e) {
-    var url = "../../cgi-bin/513/1/deleteDeveloper.cgi";
-	
-    $.ajax({
-           type: "POST",
+<script>
+   var ISBN = document.getElementById('ISBN').value;
+   var xmlhttp = new XMLHttpRequest( );
+   var url = "http://people.aero.und.edu/~spandey/cgi-bin/513/1/viewGame.cgi";
+   var data = "action=view&ISBN="+ISBN;
+   $.ajax({
+           type: "GET",
            url: url,
-           data: $("#deleteDeveloper").serialize(), // serializes the form's elements.
+           data:"action=view&ISBN="+ISBN,
            success: function(data)
-           {	window.location.reload();
-		var arr = JSON.parse( data);		
-		if(arr[0].success === "true"){
-			$("#purchaseSuccess").show();
-		}else{
-			$("#purchaseError").show();
-		}
-				
-	    }
-         });
-    e.preventDefault(); // avoid to execute the actual submit of the form.
-});
+           {    
+                var arr = JSON.parse( data);
+                document.getElementById('name-asin').innerHTML =arr[0].ASIN;
+		document.getElementById('name-title').innerHTML=arr[0].title;
+		document.getElementById('name-price').innerHTML=arr[0].price;
+		}    
+     });
+    $('#developer-list').multiselect({
+	includeSelectAllOption: true
+    });
+
 </script>
 </html>

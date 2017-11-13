@@ -2,8 +2,6 @@
 use CGI;
 $query  = new CGI;
 $ISBN    = $query->param('ISBN');
-$title    = $query->param( 'title' );
-$price    = $query->param( 'price' );
 $developers    = $query->param( 'developers' );
 $action = $query->param('action');
 
@@ -15,11 +13,8 @@ $action = $query->param('action');
 $cmd    =  "/usr/bin/java -Djava.security.egd=file:/dev/./urandom Game ";
 $cmd   .=  "'$action' ";
 $cmd   .=  "'$ISBN' ";
-$cmd   .=  "'$title' ";
 
 my @developers = $query->param( 'developers' );
   foreach my $developer (@developers) { $developerIds .= $developer . ","; }
 $cmd   .= "'$developerIds' ";
-$cmd   .=  "'$price' ";
-#print( $cmd );
 system($cmd);

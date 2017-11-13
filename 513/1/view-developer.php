@@ -22,35 +22,6 @@ if(!isset($_SESSION['username'])){
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/css/bootstrap-multiselect.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.js"></script>
 </head>
-
-<script>
-   var xmlhttp = new XMLHttpRequest( );
-   var url = "../../cgi-bin/513/1/developers.cgi";
-   xmlhttp.onreadystatechange = function( ) {
-    if ( xmlhttp.readyState == 4 && xmlhttp.status == 200 ) {
-     myFunction( xmlhttp.responseText );
-    }
-   }
-   xmlhttp.open( "GET", url, true );
-   xmlhttp.send( );
-
-  function myFunction( response ) {
-    var arr = JSON.parse( response );
-    var i;
-    var out  = "<table class='table table-bordered'><tr><th>Developer Id</th>" +
-               "<th>Full Name</th>"+"<th>Select Developers</th>"+"</tr>";
-    for ( i = 0; i < arr.length; i++ ) {
-     out += "<tr><td>"  + arr[i].id +
-            "</td><td><a href='view-developer.php?id="+ arr[i].id +"'>" + arr[i].name + "</a>"+
-	     "</td><td><input type='checkbox' name='developerIds' value='"+arr[i].id+"'>"+
-            "</td></tr>";
-    }
-    out += "</table>"
-    document.getElementById( "developer-table" ).innerHTML = out;
-   }
-
-</script>
-
 <body>
 <div id="wrapper">
  <!-- Sidebar -->
@@ -90,50 +61,56 @@ if(!isset($_SESSION['username'])){
 				</div>
 			</div>
 			<div class="col-sm-8">
-			<h2>List Developers</h2>
-			<div class="row">
-			<div id="purchaseSuccess" class="alert alert-success" style="display:none"> Developer deleted successfully. </div>
-			<div id="purchaseError" class="alert alert-danger" style="display:none"> Something went wrong, try again ! </div>
-			<form id="deleteDeveloper" class="form-horizontal" method="post" >
-				<div id="developer-table"></div>
-			<br><br>
-				  <div class="row">
-					<div class="col-sm-12 box">
-					<h3> Delete Developer:</h3>
-						<div id="developer-select-list"></div>
-						<div class="pull-right">
-						<input type="hidden" name="action" value="deleteDeveloper">
-						<input type="submit" class="btn btn-danger " name="submit" value="Delete selected developer">	
-						</div>				
-				  </div>
-			</form>
-			</div>
-			   
+			   <input type="hidden" id="id" name="id" value="<?php echo $_GET['id'] ?>">
+				<div class="row">
+					<div class="panel panel-default">
+						<h3>Developer Information</h3>
+						<div class="panel-body">
+							<label for="ISBN">Developer Id </label>
+				  			<div id="name-id"></div>
+							<label for="title">First Name</label>
+				    			<div id="name-fname"></div>
+							 <label for="price">Last Name</label>
+				   			<div id="name-lname"></div><hr>
+							<label for="games">Developed Games</label>
+				   			<div id="name-games"></div>
+						</div>
+					</div>
+				</div>
 		    </div>
 		  </div>
 		   
 		 </div>
 </body>
-<script type="text/javascript">
-$("#deleteDeveloper").submit(function(e) {
-    var url = "../../cgi-bin/513/1/deleteDeveloper.cgi";
-	
-    $.ajax({
-           type: "POST",
+<script>
+   var id = document.getElementById('id').value;
+   var xmlhttp = new XMLHttpRequest( );
+   var url = "http://people.aero.und.edu/~spandey/cgi-bin/513/1/viewDeveloper.cgi";
+
+   $.ajax({
+           type: "GET",
            url: url,
-           data: $("#deleteDeveloper").serialize(), // serializes the form's elements.
+           data:"action=view&id="+id,
            success: function(data)
-           {	window.location.reload();
-		var arr = JSON.parse( data);		
-		if(arr[0].success === "true"){
-			$("#purchaseSuccess").show();
-		}else{
-			$("#purchaseError").show();
+           {    
+		                
+		var arr = JSON.parse( data);
+		
+                document.getElementById('name-id').innerHTML =arr[0].id;
+		document.getElementById('name-fname').innerHTML=arr[0].fname;
+		document.getElementById('name-lname').innerHTML=arr[0].lname;
+		var arr1 = JSON.parse( JSON.stringify(arr[0].games));
+		var i;
+		var out  = "<table class='table table-bordered'><tr><th>S.N</th><th>Game Title</th></tr>";
+		for ( i = 0; i < arr1.length; i++){
+			var counter = i+1;
+			out+= "<tr><td>"  + counter +
+            		"</td><td> <a href='view-game.php?ISBN="+arr1[i].ASIN+"'>"+arr1[i].Title+"</a></td></tr>";
 		}
-				
-	    }
-         });
-    e.preventDefault(); // avoid to execute the actual submit of the form.
-});
+		 out+= "</table>";
+		document.getElementById('name-games').innerHTML=out;
+		}    
+     });
+
 </script>
 </html>
