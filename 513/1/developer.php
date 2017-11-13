@@ -110,8 +110,36 @@ if(!isset($_SESSION['username'])){
 			</div>
 			   
 		    </div>
+		   <?php if($_SESSION['username'] == 'admin'){?>
+		  <div class="row"><br><br><br>
+		  	<div class="col-sm-12">
+		  	<div class="panel panel-default">
+						<div class="panel-body">
+							<a href="../../cgi-bin/513/1/reset.cgi" class="btn btn-warning btn-flat pull-left"> Clear System </a>
+			  				<form action="#" method="POST">
+			  					<input type="hidden" name="fileName" value="dashboard.php">
+								<a href="https://github.com/sanjayapandey/UND-work/tree/dev" target="_blank" class="btn btn-info btn-flat pull-right"> Github Source </a>
+								<input type="submit" class="btn btn-primary btn-flat pull-right" name="source" value="source">
+			  				</form>
+						</div>
+				</div>
+				<div class="panel panel-default">
+						<h3>Page Source Code</h3>
+					<div class="panel-body">
+						<?php 
+							if(isset($_POST['source']) && $_POST['source'] != ''){
+								
+								$file = fopen( $_POST['fileName'], "r" ) or	exit( "Unable to open file!" );
+								while ( !feof( $file ) )
+									highlight_string(fgets( $file ));
+								fclose( $file );
+							}
+						?>
+					</div>
+				</div>
+			</div>
 		  </div>
-		   
+		  <?php }?>
 		 </div>
 </body>
 <script type="text/javascript">
