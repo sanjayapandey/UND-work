@@ -78,7 +78,7 @@ if(!isset($_SESSION['username'])){
 							<label for="developers">Developers</label>
 				   			 <div id="name-developer"></div>
 						</div>
-						<br>
+						<br> <?php if($_SESSION['username'] == 'admin'){?>
 						  <div class="row">
 							<div class="col-sm-12 box">
 							<input type="hidden" name="action" value="addDeveloper">
@@ -89,6 +89,7 @@ if(!isset($_SESSION['username'])){
 								</div>				
 							</div>
 						  </div>
+						<?php }?>
 					</div>				
 			 	</form> 
 		    </div>

@@ -98,10 +98,15 @@ if(!isset($_SESSION['username'])){
 				<div id="custom-search-input">
 					<div class="input-group col-md-12">
 						<form id="searchGame" method="post" action="#">
-							<input type="text" class="form-control input-lg" name="searchTitle"
+							<div class="col-sm-10">
+							<input type="text" class="form-control input-lg pull-left" name="searchTitle"
 								placeholder="Search by game name" value= "<?php if (isset($_POST['searchTitle'])) {
 									echo $_POST['searchTitle'];
-								}?>"/> 
+								}?>"/>
+							</div>
+							<div class="col-sm-2">
+							<button type="submit" name="search" class="btn btn-primary pull-right"><span class="glyphicon glyphicon-search"></span>&nbsp &nbsp Search</button>
+							</div> 
 						</form>
 						<br> <br> <br>
 					</div>
@@ -129,7 +134,7 @@ if(!isset($_SESSION['username'])){
 		  	<div class="col-sm-8">
 		  	<div class="panel panel-default">
 						<div class="panel-body">
-							<a href="reset.php" class="btn btn-warning btn-flat pull-left"> Clear System </a>
+							<a href="../../cgi-bin/513/1/reset.cgi" class="btn btn-warning btn-flat pull-left"> Clear System </a>
 			  				<form action="#" method="POST">
 			  					<input type="hidden" name="fileName" value="dashboard.php">
 								<a href="https://github.com/sanjayapandey/UND-work/tree/dev" target="_blank" class="btn btn-info btn-flat pull-right"> Github Source </a>
